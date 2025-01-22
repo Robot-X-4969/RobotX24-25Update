@@ -19,10 +19,6 @@ public class OpMode2025 extends XOpMode {
     ClawSystem clawSystem;
     ToggleMode toggleMode;
 
-    {
-
-    }
-
     public void initModules() {
 
         super.initModules();

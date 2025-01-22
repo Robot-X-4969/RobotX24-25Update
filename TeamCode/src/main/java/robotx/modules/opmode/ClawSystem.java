@@ -43,7 +43,7 @@ public class ClawSystem extends XModule {
     public void incrementState(){
         state++;
         if(state > 2){
-            state = 2;
+            state = 0;
         }
     }
 

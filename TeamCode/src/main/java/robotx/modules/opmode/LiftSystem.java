@@ -26,22 +26,24 @@ public class LiftSystem extends XModule {
         super(op);
         liftServos = new XServo[]{
                 new XServo(op, "liftServo1", new double[]{
-                        .75+margin, .25+margin, .75+margin
+                        .75 + margin, .25 + margin, .75 + margin
                 }),
                 new XServo(op, "liftServo2", new double[]{
-                        .25-margin, .75-margin, .25-margin
+                        .25 - margin, .75 - margin, .25 - margin
                 }),
                 new XServo(op, "liftServo3", new double[]{
-                        .75+margin, .25+margin, .75+margin
+                        .75 + margin, .25 + margin, .75 + margin
                 }),
                 new XServo(op, "liftServo4", new double[]{
-                        .25-margin, .75-margin, .25-margin
+                        .25 - margin, .75 - margin, .25 - margin
                 })
         };
     }
+
     public void init() {
-        for(XServo servo : liftServos){
+        for (XServo servo : liftServos) {
             servo.init();
+            servo.setPosition(.5);
         }
         liftMotor1 = opMode.hardwareMap.dcMotor.get("liftMotor1");
         liftMotor2 = opMode.hardwareMap.dcMotor.get("liftMotor2");
@@ -54,7 +56,7 @@ public class LiftSystem extends XModule {
     }
 
     public void moveLift() {
-        for(XServo servo : liftServos){
+        for (XServo servo : liftServos) {
             servo.forward();
         }
     }
@@ -65,10 +67,10 @@ public class LiftSystem extends XModule {
             if (xGamepad1().a.wasPressed()) {
                 moveLift();
             }
-            if (xGamepad1().dpad_up.isDown()) {
-                raiseLift(-power);
-            } else if (xGamepad1().dpad_down.isDown()) {
-                raiseLift(power);
+            if (xGamepad1().right_trigger > .1) {
+                raiseLift(-xGamepad1().right_trigger);
+            } else if (xGamepad1().left_trigger > .1) {
+                raiseLift(xGamepad1().left_trigger);
             } else {
                 raiseLift(0);
             }
@@ -76,10 +78,10 @@ public class LiftSystem extends XModule {
             if (xGamepad2().a.wasPressed()) {
                 moveLift();
             }
-            if (xGamepad2().dpad_up.isDown()) {
-                raiseLift(-power);
-            } else if (xGamepad2().dpad_down.isDown()) {
-                raiseLift(power);
+            if (xGamepad2().right_trigger > .1) {
+                raiseLift(-xGamepad2().right_trigger);
+            } else if (xGamepad2().left_trigger > .1) {
+                raiseLift(xGamepad2().left_trigger);
             } else {
                 raiseLift(0);
             }

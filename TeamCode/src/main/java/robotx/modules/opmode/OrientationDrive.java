@@ -134,7 +134,6 @@ public class OrientationDrive extends XModule {
     }
 
     public void loop() {
-
         getHeadingAngle();
 
 
@@ -179,14 +178,14 @@ public class OrientationDrive extends XModule {
 
         //Makes robot slower when picking up blocks
         superSlowMode = ClawSystem.state == 1;
-        /*
-        if(xGamepad1().dpad_left.wasPressed()){
+
+        if(xGamepad1().dpad_down.wasPressed()){
             power -= 0.25;
         }
-        if(xGamepad1().dpad_right.wasPressed()){
+        if(xGamepad1().dpad_up.wasPressed()){
             power += 0.25;
         }
-         */
+
         if(power > 1){
             power = 1;
         }
@@ -195,17 +194,17 @@ public class OrientationDrive extends XModule {
         }
 
         if (slowMode) {
-            frontLeft.setPower((yPrime - xPrime - r) * (s) * 0.55);
-            backRight.setPower((yPrime - xPrime + r) * (s) * 0.55);
+            frontLeft.setPower((yPrime - xPrime - r) * (s) * 0.5);
+            backRight.setPower((yPrime - xPrime + r) * (s) * 0.5);
 
-            frontRight.setPower((yPrime + xPrime + r) * (s) * 0.55);
-            backLeft.setPower((yPrime + xPrime - r) * (s) * 0.55);
+            frontRight.setPower((yPrime + xPrime + r) * (s) * 0.5);
+            backLeft.setPower((yPrime + xPrime - r) * (s) * 0.5);
         } else if (superSlowMode) {
-            frontLeft.setPower((yPrime - xPrime - r) * (s) * 0.33);
-            backRight.setPower((yPrime - xPrime + r) * (s) * 0.33);
+            frontLeft.setPower((yPrime - xPrime - r) * (s) * 0.2);
+            backRight.setPower((yPrime - xPrime + r) * (s) * 0.2);
 
-            frontRight.setPower((yPrime + xPrime + r) * (s) * .33);
-            backLeft.setPower((yPrime + xPrime - r) * (s) * .33);
+            frontRight.setPower((yPrime + xPrime + r) * (s) * .2);
+            backLeft.setPower((yPrime + xPrime - r) * (s) * .2);
         } else {
             frontLeft.setPower((yPrime - xPrime - r) * (s) * power);
             backRight.setPower((yPrime - xPrime + r) * (s) * power);
