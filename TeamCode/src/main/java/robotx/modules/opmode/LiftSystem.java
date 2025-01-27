@@ -20,8 +20,6 @@ public class LiftSystem extends XModule {
     public DcMotor liftMotor1;
     public DcMotor liftMotor2;
 
-    public boolean lifted = true;
-
     public LiftSystem(OpMode op) {
         super(op);
         liftServos = new XServo[]{
@@ -41,9 +39,11 @@ public class LiftSystem extends XModule {
     }
 
     public void init() {
+        double sign = 1;
         for (XServo servo : liftServos) {
             servo.init();
-            servo.setPosition(.5);
+            servo.setPosition(.5+sign*(margin+.05));
+            sign *= -1;
         }
         liftMotor1 = opMode.hardwareMap.dcMotor.get("liftMotor1");
         liftMotor2 = opMode.hardwareMap.dcMotor.get("liftMotor2");

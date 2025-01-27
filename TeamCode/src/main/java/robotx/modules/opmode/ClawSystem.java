@@ -20,7 +20,7 @@ public class ClawSystem extends XModule {
     public ClawSystem(OpMode op) {
         super(op);
         clawServo = new XServo(op, "clawServo", new double[]{
-                0, 0.66
+                0.5, 0.85
         });
         rotationServo = new XServo(op, "rotationServo", new double[]{0.5});
         mountServos = new XServo[]{

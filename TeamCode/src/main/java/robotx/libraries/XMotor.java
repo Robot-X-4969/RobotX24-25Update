@@ -31,7 +31,7 @@ public class XMotor {
     }
 
     private DcMotor motor;
-    private double power = 0;
+    public double power = 0;
 
     private boolean fixed = false;
     private int targetPosition = 0;
