@@ -15,7 +15,7 @@ public class LiftSystem extends XModule {
     private final XServo[] liftServos;
 
     public double power = 1;
-    public double margin = 0.0;
+    public static double margin = 0.0;
 
     public DcMotor liftMotor1;
     public DcMotor liftMotor2;
@@ -26,16 +26,16 @@ public class LiftSystem extends XModule {
         super(op);
         liftServos = new XServo[]{
                 new XServo(op, "liftServo1", new double[]{
-                        .75 + margin, .25 + margin, .75 + margin
+                        .75 + margin, .25 + margin, .25 + margin, .75 + margin
                 }),
                 new XServo(op, "liftServo2", new double[]{
-                        .25 - margin, .75 - margin, .25 - margin
+                        .25 - margin, .75 - margin, .75 - margin, .25 - margin
                 }),
                 new XServo(op, "liftServo3", new double[]{
-                        .75 + margin, .25 + margin, .75 + margin
+                        .75 + margin, .25 + margin, .25 + margin, .75 + margin
                 }),
                 new XServo(op, "liftServo4", new double[]{
-                        .25 - margin, .75 - margin, .25 - margin
+                        .25 - margin, .75 - margin, .75 - margin, .25 - margin
                 })
         };
     }
@@ -55,7 +55,8 @@ public class LiftSystem extends XModule {
         liftMotor2.setPower(liftPower);
     }
 
-    public void moveLift() {
+    public void moveLift
+        ) {
         for (XServo servo : liftServos) {
             servo.forward();
         }
@@ -75,10 +76,14 @@ public class LiftSystem extends XModule {
                 raiseLift(0);
             }
         } else {
-            if (xGamepad2().a.wasPressed()) {
+            if (xGamepad2().a.wasPressed() || xGamepad1().a.wasPressed()) {
                 moveLift();
             }
-            if (xGamepad2().right_trigger > .1) {
+            if (xGamepad1().right_trigger > .1) {
+                raiseLift(-xGamepad1().right_trigger);
+            } else if (xGamepad1().left_trigger > .1) {
+                raiseLift(xGamepad1().left_trigger);
+            } else if (xGamepad2().right_trigger > .1) {
                 raiseLift(-xGamepad2().right_trigger);
             } else if (xGamepad2().left_trigger > .1) {
                 raiseLift(xGamepad2().left_trigger);

@@ -20,15 +20,15 @@ public class ClawSystem extends XModule {
     public ClawSystem(OpMode op) {
         super(op);
         clawServo = new XServo(op, "clawServo", new double[]{
-                0, 0.66
+                0, 0.25
         });
         rotationServo = new XServo(op, "rotationServo", new double[]{0.5});
         mountServos = new XServo[]{
                 new XServo(op, "mountServo1", new double[]{
-                        1, .33, .33
+                        1, .33, 1, .33
                 }),
                 new XServo(op, "mountServo2", new double[]{
-                        0, .67*3/20, .67*3/20
+                        0, .67*3/20, 0, .67*3/20
                 })
         };
     }
@@ -42,7 +42,9 @@ public class ClawSystem extends XModule {
 
     public void incrementState(){
         state++;
-        if(state > 2){
+        if(state > 3
+
+        ){
             state = 0;
         }
     }
@@ -65,19 +67,19 @@ public class ClawSystem extends XModule {
                 rotationServo.increment(increment);
             }
         } else {
-            if (xGamepad2().a.wasPressed()) {
+            if (xGamepad2().a.wasPressed() || xGamepad1().a.wasPressed()) {
                 rotationServo.forward();
                 mountServos[0].forward();
                 mountServos[1].forward();
                 incrementState();
             }
-            if (xGamepad2().b.wasPressed()) {
+            if (xGamepad2().b.wasPressed() || xGamepad1().b.wasPressed()) {
                 clawServo.forward();
             }
-            if (xGamepad2().dpad_left.isDown()) {
+            if (xGamepad2().dpad_left.isDown() || xGamepad1().dpad_left.isDown()){
                 rotationServo.increment(-increment);
             }
-            if (xGamepad2().dpad_right.isDown()) {
+            if (xGamepad2().dpad_right.isDown() || xGamepad2().dpad_right.isDown()) {
                 rotationServo.increment(increment);
             }
         }
