@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import robotx.libraries.Schedule;
-
 /**
  * XModule Class
  * <p>
@@ -22,7 +20,7 @@ public abstract class XModule {
     /**
      * OpMode's scheduling object.
      */
-    public Schedule schedule;
+    public Scheduler scheduler;
     /**
      * XGamepad object for the primary OpMode gamepad.
      */
@@ -60,6 +58,9 @@ public abstract class XModule {
      * Method called on OpMode initialization.
      */
     public void init() {
+        for(XMotor motor : loopMotors){
+            motor.init();
+        }
     }
 
     /**

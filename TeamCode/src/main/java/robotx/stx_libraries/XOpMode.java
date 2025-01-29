@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import java.util.ArrayList;
 
-import robotx.libraries.Schedule;
-
 /**
  * XOpMode Class
  * <p>
@@ -35,7 +33,7 @@ public abstract class XOpMode extends OpMode {
     /**
      * Scheduling object used throughout OpMode.
      */
-    public final Schedule schedule = new Schedule();
+    public final Scheduler scheduler = new Scheduler();
 
     /**
      * Attaches modules to OpMode.
@@ -55,13 +53,13 @@ public abstract class XOpMode extends OpMode {
         xGamepad2.update(gamepad2);
         for (XModule module : activeModules) {
             module.init();
-            module.schedule = schedule;
+            module.scheduler = scheduler;
             module.xGamepad1 = xGamepad1;
             module.xGamepad2 = xGamepad2;
         }
         for (XModule module : inactiveModules) {
             module.init();
-            module.schedule = schedule;
+            module.scheduler = scheduler;
             module.xGamepad1 = xGamepad1;
             module.xGamepad2 = xGamepad2;
         }
@@ -74,6 +72,8 @@ public abstract class XOpMode extends OpMode {
      */
     @Override
     public void init_loop() {
+        scheduler.loop();
+
         xGamepad1.update();
         xGamepad2.update();
 
@@ -104,6 +104,8 @@ public abstract class XOpMode extends OpMode {
      */
     @Override
     public void loop() {
+        scheduler.loop();
+
         xGamepad1.update();
         xGamepad2.update();
 

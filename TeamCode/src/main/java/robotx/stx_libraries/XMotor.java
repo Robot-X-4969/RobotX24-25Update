@@ -28,14 +28,14 @@ public class XMotor {
 
     private boolean brakes = true;
     private boolean safe = true;
-    private double safeRPM = 300;
+    private double safeRPM = 100;
 
     private long tpr = 1500;
     private double rpm = 0;
 
     private double rpmCoef = 0;
     private boolean rpmCoefSet = false;
-    private StopWatch rpmStopWatch = new StopWatch(100);
+    private final StopWatch rpmStopWatch = new StopWatch(100);
     private int lastPos = 0;
 
     private int min;
@@ -108,6 +108,11 @@ public class XMotor {
      * @param power The new power for the motor to run at.
      */
     public void setPower(double power) {
+        if(power > 1){
+            power = 1;
+        } else if(power < -1){
+            power = -1;
+        }
         this.power = power;
         rpmStopWatch.startTimer(100);
         motor.setPower(power);
@@ -327,8 +332,10 @@ public class XMotor {
     /**
      * Refreshes the motor's encoder position value.
      */
-    public void refreshPosition() {
-        lastPos = position;
+    public void refreshPosition(boolean milestone) {
+        if(milestone){
+            lastPos = position;
+        }
         position = motor.getCurrentPosition();
     }
 
@@ -338,7 +345,7 @@ public class XMotor {
      * @param incrementAmount Amount of encoder ticks to rotate by.
      */
     public void increment(int incrementAmount) {
-        refreshPosition();
+        refreshPosition(false);
         setFixedRotation(position + incrementAmount);
     }
 
@@ -368,7 +375,7 @@ public class XMotor {
      * Tunes the rpm coefficient.
      */
     public void loop() {
-        refreshPosition();
+        refreshPosition(false);
 
         //Ensures encoder within range
         if (position < min) {
@@ -388,22 +395,22 @@ public class XMotor {
             return;
         }
 
-        if (power > 0.15 && ((!rpmCoefSet && rpmStopWatch.timerDone()) || safe)) {
+        if (Math.abs(power) > 0.15 && rpmStopWatch.timerDone() && (!rpmCoefSet || safe)) {
             final int tickDiff = Math.abs(position - lastPos);
-            final double r = (double) tickDiff / tpr;
-            final long timeDiff = rpmStopWatch.elapsedMillis() * 1000 * 60;
-            final double currentRPM = r / timeDiff;
+            final double r = ((double) tickDiff) / tpr;
+            final long timeDiff = rpmStopWatch.elapsedMillis();
+            final double currentRPM = r / ((double) timeDiff) * 1000 * 60;
 
+            rpmStopWatch.reset();
+            refreshPosition(true);
             if (safe) {
-                if (currentRPM < safeRPM * power) {
+                if (currentRPM < safeRPM * Math.abs(power)) {
                     stop();
                     return;
                 }
             }
-            //If rpmc not set and motor is moving fast
-            if (!rpmCoefSet && rpmStopWatch.timerDone()) {
+            if (!rpmCoefSet) {
                 rpmCoef = power / currentRPM;
-                rpmStopWatch.reset();
             }
         }
     }
