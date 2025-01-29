@@ -2,7 +2,7 @@ package robotx.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import robotx.libraries.XOpMode;
+import robotx.stx_libraries.XOpMode;
 import robotx.modules.opmode.ClawSystem;
 import robotx.modules.opmode.LiftSystem;
 import robotx.modules.opmode.OrientationDrive;
@@ -35,27 +35,6 @@ public class OpMode2025 extends XOpMode {
         toggleMode = new ToggleMode(this);
         activeModules.add(toggleMode);
     }
-
-    public void init() {
-        super.init();
-    }
-    /*
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void loop() {
-
-    }
-
-    @Override
-    public void stop() {
-
-    }
-    */
-
 }
 
 /*

@@ -1,5 +1,7 @@
 package robotx.libraries;
 
+import robotx.stx_libraries.XGamepad;
+
 /**
  * Created by Nicholas on 11/12/16.
  */

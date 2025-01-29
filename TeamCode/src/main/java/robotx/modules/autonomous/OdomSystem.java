@@ -3,7 +3,7 @@ package robotx.modules.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-import robotx.libraries.XModule;
+import robotx.stx_libraries.XModule;
 
 public class OdomSystem extends XModule {
 

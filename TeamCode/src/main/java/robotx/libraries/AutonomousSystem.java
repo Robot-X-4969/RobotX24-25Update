@@ -2,6 +2,8 @@ package robotx.libraries;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import robotx.stx_libraries.XModule;
+
 /**
  * Created by Nicholas on 12/4/16.
  */

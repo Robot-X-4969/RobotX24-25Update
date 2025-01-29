@@ -2,9 +2,8 @@ package robotx.modules.opmode.testerOps;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import robotx.libraries.XModule;
+import robotx.stx_libraries.XModule;
 
 /*
     Used for testing dead zones of a servo, not testing positions like servo tester
@@ -25,16 +24,16 @@ public class DriveTester extends XModule {
         for(DcMotor motor : motors){
             motor.setPower(0);
         }
-        if(xGamepad1().y.isDown()){
+        if(xGamepad1.y.isDown()){
             motors[0].setPower(1);
         }
-        if(xGamepad1().b.isDown()){
+        if(xGamepad1.b.isDown()){
             motors[1].setPower(1);
         }
-        if(xGamepad1().a.isDown()){
+        if(xGamepad1.a.isDown()){
             motors[2].setPower(1);
         }
-        if(xGamepad1().x.isDown()){
+        if(xGamepad1.x.isDown()){
             motors[3].setPower(1);
         }
     }

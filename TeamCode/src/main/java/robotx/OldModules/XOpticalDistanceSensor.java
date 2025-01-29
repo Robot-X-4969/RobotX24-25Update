@@ -3,7 +3,7 @@ package robotx.OldModules;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
-import robotx.libraries.XModule;
+import robotx.stx_libraries.XModule;
 
 /**
  * Created by Nicholas on 11/20/16.

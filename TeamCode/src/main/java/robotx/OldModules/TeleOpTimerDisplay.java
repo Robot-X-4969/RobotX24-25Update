@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import java.text.DecimalFormat;
 
-import robotx.libraries.StopWatch;
-import robotx.libraries.XModule;
+import robotx.stx_libraries.StopWatch;
+import robotx.stx_libraries.XModule;
 
 /**
  * Created by Nicholas on 11/15/16.

@@ -21,8 +21,7 @@ public class ParkandPlace extends LinearOpMode {
         autonMethods = new AutonMethods(this);
         autonMethods.init();
 
-        final double tileTime = AutonMethods.tileTime;
-        final double liftTime = AutonMethods.liftTime;
+        final int tileTime = AutonMethods.tileTime;
 
         autonMethods.start();
 
@@ -32,9 +31,6 @@ public class ParkandPlace extends LinearOpMode {
             autonMethods.driveForward(1);
             sleep(autonMethods.sleepTime(tileTime*2));
             autonMethods.stop();
-            autonMethods.lift(0.5);
-            sleep(autonMethods.sleepTime(liftTime));
-            autonMethods.stopLift();
         }
     }
 

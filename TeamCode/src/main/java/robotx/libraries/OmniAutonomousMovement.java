@@ -3,6 +3,8 @@ package robotx.libraries;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import robotx.stx_libraries.XModule;
+
 /**
  * Created by Robot-X Team Member on 11/27/2017.
  */

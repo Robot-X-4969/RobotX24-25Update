@@ -3,6 +3,8 @@ package robotx.libraries;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import robotx.stx_libraries.XOpMode;
+
 /**
  * Created by Nicholas on 11/3/16.
  */

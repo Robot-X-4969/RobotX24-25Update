@@ -3,7 +3,7 @@ package robotx.OldModules;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import robotx.libraries.XOpMode;
+import robotx.stx_libraries.XOpMode;
 
 // Created by William on 9/14/2018
 

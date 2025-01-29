@@ -1,27 +1,33 @@
 package robotx.modules.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import robotx.libraries.XModule;
-import robotx.libraries.XServo;
+import robotx.stx_libraries.XModule;
+import robotx.stx_libraries.XMotor;
+import robotx.stx_libraries.XServo;
 
 public class LiftSystem extends XModule {
 
     // motors being used
 
     public static boolean toggle = true;
+    public static int state = 0;
 
     private final XServo[] liftServos;
 
     public double power = 1;
     public static double margin = 0.0;
 
-    public DcMotor liftMotor1;
-    public DcMotor liftMotor2;
+    public XMotor[] liftMotors;
 
     public LiftSystem(OpMode op) {
         super(op);
+
+        liftMotors = new XMotor[]{
+                new XMotor(op, "liftMotor1"),
+                new XMotor(op, "liftMotor2"),
+        };
+
         liftServos = new XServo[]{
                 new XServo(op, "liftServo1", new double[]{
                         .75 + margin, .25 + margin, .25 + margin, .75 + margin
@@ -42,54 +48,74 @@ public class LiftSystem extends XModule {
         double sign = 1;
         for (XServo servo : liftServos) {
             servo.init();
-            servo.setPosition(.5+sign*(margin+.05));
+            servo.setPosition(.5 + sign * (margin + .05));
             sign *= -1;
         }
-        liftMotor1 = opMode.hardwareMap.dcMotor.get("liftMotor1");
-        liftMotor2 = opMode.hardwareMap.dcMotor.get("liftMotor2");
+        for(XMotor motor : liftMotors){
+            motor.init();
+            loopMotors.add(motor);
+        }
+    }
+
+    public void incrementState(int increment) {
+        state += increment;
+        if (state > 3) {
+            state = 0;
+        } else if (state < 0) {
+            state = 3;
+        }
     }
 
     // sets lift motor power one to the opposite of lift motor one because that's what makes them work
-    public void raiseLift(double liftPower) {
-        liftMotor1.setPower(liftPower);
-        liftMotor2.setPower(liftPower);
+    public void lift(double liftPower) {
+        for(XMotor motor : liftMotors){
+            motor.setPower(liftPower);
+        }
     }
 
-    public void moveLift
-        ) {
-        for (XServo servo : liftServos) {
-            servo.forward();
+    public void rotateLift(boolean forward) {
+        if(forward){
+            for (XServo servo : liftServos) {
+                servo.forward();
+            }
+            incrementState(1);
+        } else {
+            for (XServo servo : liftServos) {
+                servo.backward();
+            }
+            incrementState(-1);
         }
     }
 
 
     public void loop() {
+        super.loop();
+        // 2nd Driver Controls
         if (toggle) {
-            if (xGamepad1().a.wasPressed()) {
-                moveLift();
+            if (xGamepad2.a.wasPressed()) {
+                rotateLift(true);
             }
-            if (xGamepad1().right_trigger > .1) {
-                raiseLift(-xGamepad1().right_trigger);
-            } else if (xGamepad1().left_trigger > .1) {
-                raiseLift(xGamepad1().left_trigger);
+            if (xGamepad2.x.wasPressed()) {
+                rotateLift(false);
+            }
+            if (xGamepad2.right_trigger > .1) {
+                lift(-xGamepad2.right_trigger);
+            } else if (xGamepad2.left_trigger > .1) {
+                lift(xGamepad2.left_trigger);
             } else {
-                raiseLift(0);
+                lift(0);
             }
+        }
+        // 1st Driver Controls; Overrides
+        if (xGamepad1.a.wasPressed()) {
+            rotateLift(true);
+        }
+        if (xGamepad1.right_trigger > .1) {
+            lift(-xGamepad1.right_trigger);
+        } else if (xGamepad1.left_trigger > .1) {
+            lift(xGamepad1.left_trigger);
         } else {
-            if (xGamepad2().a.wasPressed() || xGamepad1().a.wasPressed()) {
-                moveLift();
-            }
-            if (xGamepad1().right_trigger > .1) {
-                raiseLift(-xGamepad1().right_trigger);
-            } else if (xGamepad1().left_trigger > .1) {
-                raiseLift(xGamepad1().left_trigger);
-            } else if (xGamepad2().right_trigger > .1) {
-                raiseLift(-xGamepad2().right_trigger);
-            } else if (xGamepad2().left_trigger > .1) {
-                raiseLift(xGamepad2().left_trigger);
-            } else {
-                raiseLift(0);
-            }
+            lift(0);
         }
     }
 }

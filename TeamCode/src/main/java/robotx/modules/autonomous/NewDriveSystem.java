@@ -3,7 +3,7 @@ package robotx.modules.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import robotx.libraries.XModule;
+import robotx.stx_libraries.XModule;
 
 public class NewDriveSystem extends XModule {
 
@@ -21,9 +21,9 @@ public class NewDriveSystem extends XModule {
         bRight = opMode.hardwareMap.dcMotor.get("bRight");
     }
 
-    public void loop() {double xPow = -1 * controlRamp( xGamepad1().left_stick_x); // Negate the left stick value because negative is right. Negating it will make negative left, as we want
-        double yPow = controlRamp(xGamepad1().left_stick_y);
-        double rotPow = -1 *  controlRamp(xGamepad1().right_stick_x); //again, negate because negative is right
+    public void loop() {double xPow = -1 * controlRamp( xGamepad1.left_stick_x); // Negate the left stick value because negative is right. Negating it will make negative left, as we want
+        double yPow = controlRamp(xGamepad1.left_stick_y);
+        double rotPow = -1 *  controlRamp(xGamepad1.right_stick_x); //again, negate because negative is right
 
         /* note
             For mechanum drive to strafe to the right, the wheels on the right turn outwards // wheels on left turn inwards
@@ -96,12 +96,12 @@ public class NewDriveSystem extends XModule {
 
         double output = input;
         double coeff = 1.0;
-        if (xGamepad1().right_bumper.isDown())
+        if (xGamepad1.right_bumper.isDown())
         {
             coeff = coeff / 2.0;
         }
 
-        else if (xGamepad1().left_bumper.isDown())
+        else if (xGamepad1.left_bumper.isDown())
         {
             coeff = coeff / 4.0;
         }

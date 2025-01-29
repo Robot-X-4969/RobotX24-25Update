@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import robotx.libraries.XModule;
+import robotx.stx_libraries.XModule;
 
 public class OrientationDrive extends XModule {
     public OrientationDrive(OpMode op) {
@@ -93,8 +93,7 @@ public class OrientationDrive extends XModule {
 
         if (deltaAngle < -180) {
             deltaAngle += 360;
-        }
-        else if (deltaAngle > 180) {
+        } else if (deltaAngle > 180) {
             deltaAngle -= 360;
         }
 //Change in angle compared to orientation: if gyro measures clockwise should add rather than subtract
@@ -142,20 +141,20 @@ public class OrientationDrive extends XModule {
         } else {
             robotAngle = 0;
         }
-        /*if (xGamepad1().y.wasPressed()) {
+        /*if (xGamepad1.y.wasPressed()) {
             switchMode();
         }
         */
-        if (xGamepad1().x.wasPressed()) {
+        if (xGamepad1.x.wasPressed()) {
             offset = globalAngle;
         }
         //opMode.telemetry.addData("Orientation mode:", orientationMode);
 
 
-        x = xGamepad1().left_stick_x;
-        y = xGamepad1().left_stick_y;
+        x = xGamepad1.left_stick_x;
+        y = xGamepad1.left_stick_y;
 //Position of right stick AKA direction robot should turn
-        r = xGamepad1().right_stick_x;
+        r = xGamepad1.right_stick_x;
         s = ((Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(r)))) * (Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(r))))) / ((x * x) + (y * y) + (r * r));
 
 
@@ -177,19 +176,19 @@ public class OrientationDrive extends XModule {
         yPrime = -(Math.sqrt((x * x + y * y))) * (Math.sin(robotAngle + joystickAngle));
 
         //Makes robot slower when picking up blocks
-        superSlowMode = ClawSystem.state == 1;
+        superSlowMode = LiftSystem.state == 1;
 
-        if(xGamepad1().dpad_down.wasPressed()){
+        if (xGamepad1.dpad_down.wasPressed()) {
             power -= 0.25;
         }
-        if(xGamepad1().dpad_up.wasPressed()){
+        if (xGamepad1.dpad_up.wasPressed()) {
             power += 0.25;
         }
 
-        if(power > 1){
+        if (power > 1) {
             power = 1;
         }
-        if(power < 0.25){
+        if (power < 0.25) {
             power = 0.25;
         }
 

@@ -52,9 +52,9 @@ public class MecanumDrive extends OmniDriveSystem {
 
     public void loop(){
 
-        double xPow = -1 * controlRamp( xGamepad1().left_stick_x); // Negate the left stick value because negative is right. Negating it will make negative left, as we want
-        double yPow = controlRamp(xGamepad1().left_stick_y);
-        double rotPow = -1 *  controlRamp(xGamepad1().right_stick_x); //again, negate because negative is right
+        double xPow = -1 * controlRamp( xGamepad1.left_stick_x); // Negate the left stick value because negative is right. Negating it will make negative left, as we want
+        double yPow = controlRamp(xGamepad1.left_stick_y);
+        double rotPow = -1 *  controlRamp(xGamepad1.right_stick_x); //again, negate because negative is right
 
         /* note
             For mechanum drive to strafe to the right, the wheels on the right turn outwards // wheels on left turn inwards
@@ -95,12 +95,12 @@ public class MecanumDrive extends OmniDriveSystem {
 
         double output = input;
         double coeff = 1.0;
-        if (xGamepad1().right_bumper.isDown())
+        if (xGamepad1.right_bumper.isDown())
         {
             coeff = coeff / 2.0;
         }
 
-        else if (xGamepad1().left_bumper.isDown())
+        else if (xGamepad1.left_bumper.isDown())
         {
             coeff = coeff / 4.0;
         }

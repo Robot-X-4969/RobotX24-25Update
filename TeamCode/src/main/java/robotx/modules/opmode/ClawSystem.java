@@ -2,17 +2,13 @@ package robotx.modules.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import robotx.libraries.XModule;
-import robotx.libraries.XServo;
+import robotx.stx_libraries.XModule;
+import robotx.stx_libraries.XServo;
 
 public class ClawSystem extends XModule {
-
-    // motors being used
-
     public static boolean toggle = true;
-    public static int state = 0;
 
-    public double increment = 0.015*3/20;
+    public static final double increment = 0.01 * 3 / 20;
 
     public final XServo clawServo, rotationServo;
     public final XServo[] mountServos;
@@ -22,13 +18,13 @@ public class ClawSystem extends XModule {
         clawServo = new XServo(op, "clawServo", new double[]{
                 0.5, 0.85
         });
-        rotationServo = new XServo(op, "rotationServo", new double[]{0.5});
+        rotationServo = new XServo(op, "rotationServo", 0.5);
         mountServos = new XServo[]{
                 new XServo(op, "mountServo1", new double[]{
-                        1, .33, .33
+                        1, .33
                 }),
                 new XServo(op, "mountServo2", new double[]{
-                        0, .67*3/20, .67*3/20
+                        0, .67 * 3 / 20
                 })
         };
     }
@@ -36,50 +32,66 @@ public class ClawSystem extends XModule {
     public void init() {
         clawServo.init();
         rotationServo.init();
-        mountServos[0].init();
-        mountServos[1].init();
+        for (XServo servo : mountServos) {
+            servo.init();
+        }
     }
 
-    public void incrementState(){
-        state++;
-        if(state > 2){
-            state = 0;
+    public void claw() {
+        clawServo.forward();
+    }
+
+    public void resetRotation(){
+        rotationServo.forward();
+    }
+
+    public void rotateMount(boolean forward){
+        if(forward){
+            for (XServo servo : mountServos) {
+                servo.forward();
+            }
+        } else {
+            for (XServo servo : mountServos) {
+                servo.backward();
+            }
         }
     }
 
     public void loop() {
+        //2nd Driver Controls
         if (toggle) {
-            if (xGamepad1().a.wasPressed()) {
-                rotationServo.forward();
-                mountServos[0].forward();
-                mountServos[1].forward();
-                incrementState();
+            if (xGamepad2.a.wasPressed()) {
+                resetRotation();
+                rotateMount(true);
             }
-            if (xGamepad1().b.wasPressed()) {
-                clawServo.forward();
+            if (xGamepad2.x.wasPressed()) {
+                resetRotation();
+                rotateMount(false);
             }
-            if (xGamepad1().dpad_left.isDown()) {
+            if (xGamepad2.b.wasPressed()) {
+                claw();
+            }
+            if (xGamepad2.dpad_left.isDown()) {
                 rotationServo.increment(-increment);
             }
-            if (xGamepad1().dpad_right.isDown()) {
+            if (xGamepad2.dpad_right.isDown()) {
                 rotationServo.increment(increment);
             }
-        } else {
-            if (xGamepad2().a.wasPressed()) {
-                rotationServo.forward();
-                mountServos[0].forward();
-                mountServos[1].forward();
-                incrementState();
-            }
-            if (xGamepad2().b.wasPressed()) {
-                clawServo.forward();
-            }
-            if (xGamepad2().dpad_left.isDown()) {
-                rotationServo.increment(-increment);
-            }
-            if (xGamepad2().dpad_right.isDown()) {
-                rotationServo.increment(increment);
-            }
+        }
+
+        //1st Driver Controls; Overrides
+        if (xGamepad1.a.wasPressed()) {
+            resetRotation();
+            rotateMount(true);
+        }
+        if (xGamepad1.b.wasPressed()) {
+            claw();
+        }
+        if (xGamepad1.dpad_left.isDown()) {
+            rotationServo.increment(-increment);
+        }
+        if (xGamepad1.dpad_right.isDown()) {
+            rotationServo.increment(increment);
         }
     }
 }

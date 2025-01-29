@@ -21,7 +21,7 @@ public class ParkandPush extends LinearOpMode {
         autonMethods = new AutonMethods(this);
         autonMethods.init();
 
-        final double tileTime = AutonMethods.tileTime;
+        final int tileTime = AutonMethods.tileTime;
 
         autonMethods.start();
 

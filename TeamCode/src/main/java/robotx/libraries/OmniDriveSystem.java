@@ -6,6 +6,8 @@ package robotx.libraries;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import robotx.stx_libraries.XModule;
+
 /**
  * Created by Robot-X Team Member (Nicholas) on 11/21/2017.
  * Represents any drive system that can move at any angle, and rotate.
@@ -71,9 +73,9 @@ public abstract class OmniDriveSystem extends XModule {
 
     public void loop() {
         if (controlsEnabled) {
-            double xPow = controlRamp(-xGamepad1().left_stick_x);
-            double yPow = controlRamp(-xGamepad1().left_stick_y); // Negate the left stick value because negative is up.
-            double rotPow = controlRamp(xGamepad1().right_stick_x);
+            double xPow = controlRamp(-xGamepad1.left_stick_x);
+            double yPow = controlRamp(-xGamepad1.left_stick_y); // Negate the left stick value because negative is up.
+            double rotPow = controlRamp(xGamepad1.right_stick_x);
 
             setXPower(xPow);
             setYPower(yPow);
@@ -86,10 +88,10 @@ public abstract class OmniDriveSystem extends XModule {
     private double controlRamp(double input) {
         double output = input;
         double coeff = 1.0;
-        if (xGamepad1().left_bumper.isDown() || xGamepad1().right_bumper.isDown()) {
+        if (xGamepad1.left_bumper.isDown() || xGamepad1.right_bumper.isDown()) {
             coeff = coeff / 2.0;
         }
-        if (xGamepad1().right_bumper.isDown() && xGamepad1().left_bumper.isDown()) {
+        if (xGamepad1.right_bumper.isDown() && xGamepad1.left_bumper.isDown()) {
             coeff = coeff / 8.0;
         }
 

@@ -6,23 +6,22 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import robotx.libraries.XModule;
-import robotx.libraries.XServo;
+import robotx.stx_libraries.XModule;
+import robotx.stx_libraries.XServo;
 
 
 public class AutonMethods extends XModule {
-    public DcMotor frontLeft;
-    public DcMotor frontRight;
-    public DcMotor backLeft;
-    public DcMotor backRight;
+    private DcMotor frontLeft;
+    private DcMotor frontRight;
+    private DcMotor backLeft;
+    private DcMotor backRight;
 
-    public DcMotor liftMotor1;
-    public DcMotor liftMotor2;
+    private DcMotor liftMotor1;
+    private DcMotor liftMotor2;
 
-    public XServo[] liftServos;
+    private XServo[] liftServos;
 
-    public static final double tileTime = 0;
-    public static final double liftTime = 0;
+    public static final int tileTime = 0;
 
     //methods are built into one button as a toggle
 
