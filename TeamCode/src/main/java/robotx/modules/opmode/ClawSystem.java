@@ -29,6 +29,7 @@ public class ClawSystem extends XModule {
         };
     }
 
+    @Override
     public void init() {
         clawServo.init();
         rotationServo.init();
@@ -57,7 +58,8 @@ public class ClawSystem extends XModule {
         }
     }
 
-    public void loop() {
+    @Override
+    public void control_loop() {
         //2nd Driver Controls
         if (toggle) {
             if (xGamepad2.a.wasPressed()) {

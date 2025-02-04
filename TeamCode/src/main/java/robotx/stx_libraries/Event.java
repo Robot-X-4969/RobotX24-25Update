@@ -21,7 +21,7 @@ public class Event {
     /**
      * The timer component of the event.
      */
-    public final StopWatch stopWatch;
+    public final Stopwatch stopwatch;
 
     /**
      * Future Event object which contains an executable and timer.
@@ -32,7 +32,7 @@ public class Event {
     public Event(long millis, Runnable event){
         id = randomID(5);
         this.event = event;
-        stopWatch = new StopWatch(millis);
+        stopwatch = new Stopwatch(millis);
     }
 
     /**
@@ -45,7 +45,7 @@ public class Event {
     public Event(long millis, String id, Runnable event){
         this.id = id;
         this.event = event;
-        stopWatch = new StopWatch(millis);
+        stopwatch = new Stopwatch(millis);
     }
 
     /**

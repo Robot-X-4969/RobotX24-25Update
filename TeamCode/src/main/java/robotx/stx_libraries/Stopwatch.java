@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * Created by Evan on 10/29/2015.
  */
-public class StopWatch {
+public class Stopwatch {
     private long tStart = 0;
     private long target = 0;
     /**
@@ -20,7 +20,7 @@ public class StopWatch {
     /**
      * Object to manage time-based measurements.
      */
-    public StopWatch() {
+    public Stopwatch() {
     }
 
     /**
@@ -28,7 +28,7 @@ public class StopWatch {
      *
      * @param millis Timer length in milliseconds.
      */
-    public StopWatch(long millis) {
+    public Stopwatch(long millis) {
         startTimer(millis);
     }
 

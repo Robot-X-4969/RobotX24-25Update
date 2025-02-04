@@ -2,6 +2,7 @@ package robotx.stx_libraries;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
  * XMotor Class
@@ -24,10 +25,11 @@ public class XMotor {
     private int targetPosition = 0;
     public int position = 0;
 
-    private final StopWatch stopWatch = new StopWatch();
+    private final Stopwatch stopWatch = new Stopwatch();
 
     private boolean brakes = true;
-    private boolean safe = true;
+    private boolean reverse = false;
+    private boolean safe = false;
     private double safeRPM = 100;
 
     private long tpr = 1500;
@@ -35,7 +37,7 @@ public class XMotor {
 
     private double rpmCoef = 0;
     private boolean rpmCoefSet = false;
-    private final StopWatch rpmStopWatch = new StopWatch(100);
+    private final Stopwatch rpmStopwatch = new Stopwatch(100);
     private int lastPos = 0;
 
     private int min;
@@ -73,6 +75,7 @@ public class XMotor {
         min = Integer.MIN_VALUE;
         max = Integer.MAX_VALUE;
         this.tpr = tpr;
+        safe = true;
     }
 
     /**
@@ -108,13 +111,13 @@ public class XMotor {
      * @param power The new power for the motor to run at.
      */
     public void setPower(double power) {
-        if(power > 1){
+        if (power > 1) {
             power = 1;
-        } else if(power < -1){
+        } else if (power < -1) {
             power = -1;
         }
         this.power = power;
-        rpmStopWatch.startTimer(100);
+        rpmStopwatch.startTimer(100);
         motor.setPower(power);
     }
 
@@ -125,7 +128,7 @@ public class XMotor {
      */
     public void stop() {
         power = 0;
-        rpmStopWatch.clearTimer();
+        rpmStopwatch.clearTimer();
         setIndefiniteRotation(0);
     }
 
@@ -152,6 +155,31 @@ public class XMotor {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } else {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+    }
+
+    /**
+     * Toggle's the motor's direction.
+     */
+    public void toggleDirection(){
+        reverse = !reverse;
+        if(reverse){
+            motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        } else {
+            motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
+    }
+
+    /**
+     * Sets the motor's direction.
+     * @param direction Direction to set the motor to; true: forwards, false: reverse
+     */
+    public void setDirection(boolean direction){
+        reverse = !direction;
+        if(reverse){
+            motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        } else {
+            motor.setDirection(DcMotorSimple.Direction.FORWARD);
         }
     }
 
@@ -265,6 +293,60 @@ public class XMotor {
     }
 
     /**
+     * Sets the motor to rotate for a given duration through a given scheduler.\
+     * <p>
+     * Event is scheduled under ID "{motorPath}Stop".
+     *
+     * @param milliseconds Duration, in milliseconds, for the motor to rotate.
+     * @param scheduler    The Scheduler object to schedule the motor's stop through.
+     */
+    public void setTimedRotation(Scheduler scheduler, int milliseconds) {
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        scheduler.schedule(milliseconds, motorPath+"Stop", this::stop);
+    }
+
+    /**
+     * Sets the motor to rotate for a given duration at a given power through a given scheduler.\
+     * <p>
+     * Event is scheduled under ID "{motorPath}Stop".
+     *
+     * @param milliseconds Duration, in milliseconds, for the motor to rotate.
+     * @param power The power to set the motor to.
+     * @param scheduler    The Scheduler object to schedule the motor's stop through.
+     */
+    public void setTimedRotation(Scheduler scheduler, int milliseconds, double power) {
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setPower(power);
+        scheduler.schedule(milliseconds, motorPath+"Stop", this::stop);
+    }
+
+    /**
+     * Cancels any scheduled stop of the motor.
+     */
+    public void cancelTimer() {
+        stopWatch.clearTimer();
+    }
+
+    /**
+     * Cancels any scheduled stop of the motor in a given Scheduler.
+     *
+     * @param scheduler The Scheduler to cancel the timer within.
+     */
+    public void cancelTimer(Scheduler scheduler) {
+        scheduler.cancel(motorPath+"Stop");
+    }
+
+    /**
+     * Resets the motor's encoders.
+     */
+    public void reset() {
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        position = 0;
+        lastPos = 0;
+    }
+
+    /**
      * Sets the motor to rotate to a given position.
      *
      * @param targetPosition The target position of the motor.
@@ -315,31 +397,6 @@ public class XMotor {
     }
 
     /**
-     * Cancels any scheduled stop of the motor.
-     */
-    public void cancelTimer() {
-        stopWatch.clearTimer();
-    }
-
-    /**
-     * Resets the motor's encoders.
-     */
-    public void reset() {
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    /**
-     * Refreshes the motor's encoder position value.
-     */
-    public void refreshPosition(boolean milestone) {
-        if(milestone){
-            lastPos = position;
-        }
-        position = motor.getCurrentPosition();
-    }
-
-    /**
      * Rotates the motor by a given amount of encoder ticks.
      *
      * @param incrementAmount Amount of encoder ticks to rotate by.
@@ -347,6 +404,38 @@ public class XMotor {
     public void increment(int incrementAmount) {
         refreshPosition(false);
         setFixedRotation(position + incrementAmount);
+    }
+
+    /**
+     * Rotates the motor by a given amount of encoder ticks at a given power.
+     *
+     * @param incrementAmount Amount of encoder ticks to rotate by.
+     * @param power The power to set the motor to.
+     */
+    public void increment(int incrementAmount, double power) {
+        refreshPosition(false);
+        setFixedRotation(position + incrementAmount, power);
+    }
+
+    /**
+     * Sets the motor's position a certain amount of ticks forward.
+     *
+     * @param incrementAmount Amount of encoder ticks to rotate by.
+     */
+    public void incrementPosition(int incrementAmount) {
+        refreshPosition(false);
+        setPosition(position + incrementAmount);
+    }
+
+    /**
+     * Sets the motor's position a certain amount of ticks forward at a given power.
+     *
+     * @param incrementAmount Amount of encoder ticks to rotate by.
+     * @param power The power to set the motor to.
+     */
+    public void incrementPosition(int incrementAmount, double power) {
+        refreshPosition(false);
+        setPosition(position + incrementAmount, power);
     }
 
     /**
@@ -365,6 +454,27 @@ public class XMotor {
      */
     public void setMax(int max) {
         this.max = max;
+    }
+    /**
+     * Sets the minimum and maximum position of the motor.
+     *
+     * @param min The minimum encoder position of the motor.
+     * @param max The maximum encoder position of the motor.
+     */
+    public void setRange(int min, int max) {
+        this.max = max;
+    }
+
+    /**
+     * Refreshes the motor's encoder position value.
+     *
+     * @param milestone Whether or not this is a milestone, where the lastPosition is updated.
+     */
+    public void refreshPosition(boolean milestone) {
+        if (milestone) {
+            lastPos = position;
+        }
+        position = motor.getCurrentPosition();
     }
 
     /**
@@ -395,13 +505,13 @@ public class XMotor {
             return;
         }
 
-        if (Math.abs(power) > 0.15 && rpmStopWatch.timerDone() && (!rpmCoefSet || safe)) {
+        if (Math.abs(power) > 0.15 && rpmStopwatch.timerDone() && (!rpmCoefSet || safe)) {
             final int tickDiff = Math.abs(position - lastPos);
             final double r = ((double) tickDiff) / tpr;
-            final long timeDiff = rpmStopWatch.elapsedMillis();
+            final long timeDiff = rpmStopwatch.elapsedMillis();
             final double currentRPM = r / ((double) timeDiff) * 1000 * 60;
 
-            rpmStopWatch.reset();
+            rpmStopwatch.reset();
             refreshPosition(true);
             if (safe) {
                 if (currentRPM < safeRPM * Math.abs(power)) {

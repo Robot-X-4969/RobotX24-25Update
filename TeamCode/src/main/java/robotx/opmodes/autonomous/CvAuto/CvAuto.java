@@ -27,7 +27,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.List;
 
 import robotx.modules.autonomous.MecanumDrive;
-import robotx.modules.opmode.OrientationDrive;
+import robotx.stx_libraries.drive.OrientationDrive;
 
 @Disabled
 

@@ -13,6 +13,21 @@ public class Button {
     private boolean currentValue = false;
 
     /**
+     * Object intended to handle states of a boolean output button.
+     */
+    public Button(){
+    }
+
+    /**
+     * Object intended to handle states of a boolean output of a button with a starting value.
+     *
+     * @param currentValue The starting value of the button.
+     */
+    public Button(boolean currentValue){
+        this.currentValue = currentValue;
+    }
+
+    /**
      * Updates the state of the button based on a privated boolean.
      *
      * @param newValue The current value of the button.

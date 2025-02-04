@@ -34,8 +34,8 @@ public class XServo {
     /**
      * The current index of the servo's position in the provided positions array.
      */
-    public int state = 0;
-    private int lastState = 0;
+    public int index = 0;
+    private int lastIndex = 0;
 
     /**
      * XServo Constructor
@@ -86,8 +86,8 @@ public class XServo {
         this.op = op;
         this.servoPath = servoPath;
         this.positions = new double[]{position};
-        this.min = min;
-        this.max = max;
+        this.min = Math.min(min, max);
+        this.max = Math.max(min, max);
     }
 
     /**
@@ -95,7 +95,7 @@ public class XServo {
      */
     public void init() {
         servo = op.hardwareMap.servo.get(servoPath);
-        servo.setPosition(positions[state]);
+        servo.setPosition(positions[index]);
     }
 
     /**
@@ -104,38 +104,38 @@ public class XServo {
      * @param index The index of the requested position in the provided positions array.
      */
     public void setIndex(int index) {
-        lastState = state;
-        state = index;
-        servo.setPosition(positions[state]);
+        lastIndex = index;
+        this.index = index;
+        servo.setPosition(positions[index]);
     }
 
     /**
      * Cycles forward through the provided positions array.
      */
     public void forward() {
-        state++;
-        if (state >= positions.length) {
-            state = 0;
+        index++;
+        if (index >= positions.length) {
+            index = 0;
         }
-        setIndex(state);
+        setIndex(index);
     }
 
     /**
      * Cycles backward through the provided positions array.
      */
     public void backward() {
-        state--;
-        if (state < 0) {
-            state = positions.length - 1;
+        index--;
+        if (index < 0) {
+            index = positions.length - 1;
         }
-        setIndex(state);
+        setIndex(index);
     }
 
     /**
      * Returns to the last set position.
      */
     public void backtrack() {
-        setIndex(lastState);
+        setIndex(lastIndex);
     }
 
     /**
@@ -150,16 +150,11 @@ public class XServo {
     /**
      * Sets the servo's position to a given position.
      *
-     * @param newPosition The position to move the servo to.
+     * @param position The position to move the servo to.
      */
-    public void setPosition(double newPosition) {
-        position = newPosition;
-        if (position > max) {
-            position = max;
-        } else if (position < min) {
-            position = min;
-        }
-        servo.setPosition(position);
+    public void setPosition(double position) {
+        this.position = Math.max(min, Math.max(min, position));
+        servo.setPosition(this.position);
     }
 
     /**
@@ -168,7 +163,7 @@ public class XServo {
      * @param min The new minimum position of the servo.
      */
     public void setMin(double min) {
-        this.min = min;
+        this.min = Math.min(min, max);
         setPosition(position);
     }
 
@@ -178,7 +173,19 @@ public class XServo {
      * @param max The new maximum position of the servo.
      */
     public void setMax(double max) {
-        this.max = max;
+        this.max = Math.max(max, min);
+        setPosition(position);
+    }
+
+    /**
+     * Sets the servo's minimum and maximum positions.
+     *
+     * @param min The new minimum position of the servo.
+     * @param max The new maximum position of the servo.
+     */
+    public void setRange(double min, double max) {
+        this.min = Math.min(min, max);
+        this.max = Math.max(max, min);
         setPosition(position);
     }
 
@@ -189,11 +196,11 @@ public class XServo {
      */
     public void setPositions(double[] positions) {
         this.positions = positions;
-        if (state >= positions.length) {
-            this.state = positions.length - 1;
+        if (index >= positions.length) {
+            this.index = positions.length - 1;
         }
-        if (lastState >= positions.length) {
-            lastState = positions.length - 1;
+        if (lastIndex >= positions.length) {
+            lastIndex = positions.length - 1;
         }
     }
 }

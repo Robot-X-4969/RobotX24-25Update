@@ -67,11 +67,23 @@ public class Scheduler {
     }
 
     /**
+     * Cancels the future execution of a given event.
+     *
+     * @param event The event to cancel.
+     */
+    public void cancel(Event event) {
+        if(events.contains(event)){
+            ids.remove(events.indexOf(event));
+            events.remove(event);
+        }
+    }
+
+    /**
      * Loop method which checks which executables to run.
      */
     public void loop() {
         for (Event event : events) {
-            if (event.stopWatch.timerDone()) {
+            if (event.stopwatch.timerDone()) {
                 event.run();
                 events.remove(event);
             }

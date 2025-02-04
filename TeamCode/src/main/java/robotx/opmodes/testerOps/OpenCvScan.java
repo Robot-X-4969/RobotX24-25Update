@@ -19,7 +19,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import robotx.modules.autonomous.MecanumDrive;
 import robotx.modules.autonomous.OdomSystem;
-import robotx.modules.opmode.OrientationDrive;
+import robotx.stx_libraries.drive.OrientationDrive;
 
 @TeleOp(name = "OpenCvScan", group = "Default")
 public class OpenCvScan extends LinearOpMode {

@@ -46,6 +46,13 @@ public class XGamepad {
     }
 
     /**
+     * Custom object class which incorporates custom Button class into gamepad functionality.
+     */
+    public XGamepad(Gamepad gamepad) {
+        update(gamepad);
+    }
+
+    /**
      * Updates the button variables based on a provided gamepad object and sets gamepad variable.
      *
      * @param gamepad The gamepad data to update the XGamepad with.

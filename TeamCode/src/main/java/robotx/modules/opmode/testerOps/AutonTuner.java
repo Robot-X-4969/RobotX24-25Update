@@ -2,7 +2,7 @@ package robotx.modules.opmode.testerOps;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import robotx.stx_libraries.StopWatch;
+import robotx.stx_libraries.Stopwatch;
 import robotx.stx_libraries.XModule;
 import robotx.modules.autonomous.AutonMethods;
 
@@ -10,7 +10,7 @@ public class AutonTuner extends XModule {
     public int tileTime = 100;
     public int unit;
 
-    public final StopWatch stopWatch = new StopWatch();
+    public final Stopwatch stopWatch = new Stopwatch();
 
     public final OpMode opMode;
     public final AutonMethods autonMethods;

@@ -44,6 +44,7 @@ public class LiftSystem extends XModule {
         };
     }
 
+    @Override
     public void init() {
         double sign = 1;
         for (XServo servo : liftServos) {
@@ -87,9 +88,8 @@ public class LiftSystem extends XModule {
         }
     }
 
-
-    public void loop() {
-        super.loop();
+    @Override
+    public void control_loop() {
         // 2nd Driver Controls
         if (toggle) {
             if (xGamepad2.a.wasPressed()) {

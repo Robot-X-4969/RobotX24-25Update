@@ -3,7 +3,7 @@ package robotx.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import robotx.stx_libraries.XOpMode;
-import robotx.modules.opmode.OrientationDrive;
+import robotx.stx_libraries.drive.OrientationDrive;
 
 @TeleOp(name = "Basic Drive", group = "CurrentOp")
 public class BasicDriveOp extends XOpMode {

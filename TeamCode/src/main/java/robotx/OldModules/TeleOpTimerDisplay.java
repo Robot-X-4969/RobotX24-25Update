@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import java.text.DecimalFormat;
 
-import robotx.stx_libraries.StopWatch;
+import robotx.stx_libraries.Stopwatch;
 import robotx.stx_libraries.XModule;
 
 /**
@@ -15,7 +15,7 @@ import robotx.stx_libraries.XModule;
  */
 public class TeleOpTimerDisplay extends XModule {
 
-    StopWatch stopWatch;
+    Stopwatch stopWatch;
 
     // Configuration options:
 
@@ -31,7 +31,7 @@ public class TeleOpTimerDisplay extends XModule {
     }
 
     public void init() {
-        stopWatch = new StopWatch();
+        stopWatch = new Stopwatch();
     }
 
     public void start() {

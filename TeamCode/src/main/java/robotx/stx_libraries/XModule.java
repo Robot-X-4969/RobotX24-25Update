@@ -67,6 +67,9 @@ public abstract class XModule {
      * Method called while awaiting OpMode start.
      */
     public void init_loop() {
+        for (XMotor motor : loopMotors) {
+            motor.loop();
+        }
     }
 
     /**
@@ -76,11 +79,18 @@ public abstract class XModule {
     }
 
     /**
+     * Method which handles inputs.
+     */
+    public void control_loop() {
+    }
+
+    /**
      * Method called while OpMode running.
      * <p>
      * By default, this loops all loopMotors.
      */
     public void loop() {
+        control_loop();
         for (XMotor motor : loopMotors) {
             motor.loop();
         }
