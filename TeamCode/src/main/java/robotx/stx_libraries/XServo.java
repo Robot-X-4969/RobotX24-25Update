@@ -1,7 +1,7 @@
 package robotx.stx_libraries;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 /**
  * XServo Class
@@ -11,9 +11,11 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by John Daniher 1/02/25
  */
 public class XServo {
-    private Servo servo;
+    private ServoImplEx servo;
     private final String servoPath;
     private final OpMode op;
+
+    public boolean enabled = true;
 
     /**
      * The minimum position of the servo's set range.
@@ -94,7 +96,7 @@ public class XServo {
      * Initiates the servo by mapping it and sets the default position.
      */
     public void init() {
-        servo = op.hardwareMap.servo.get(servoPath);
+        servo = op.hardwareMap.get(ServoImplEx.class, servoPath);
         servo.setPosition(positions[index]);
     }
 
@@ -155,6 +157,34 @@ public class XServo {
     public void setPosition(double position) {
         this.position = Math.max(min, Math.max(min, position));
         servo.setPosition(this.position);
+    }
+
+    public void disable(){
+        enabled = false;
+        servo.setPwmDisable();
+    }
+
+    public void enable(){
+        enabled = true;
+        servo.setPwmEnable();
+    }
+
+    public void toggleEnabled(){
+        enabled = !enabled;
+        if(enabled){
+            enable();
+        } else {
+            disable();
+        }
+    }
+
+    public void setEnabled(boolean enabled){
+        this.enabled = enabled;
+        if(enabled){
+            enable();
+        } else {
+            disable();
+        }
     }
 
     /**

@@ -62,6 +62,9 @@ public class MecanumOrientationDrive extends XModule {
     private double y;
     private double r;
 
+    private final Stopwatch rotationStopwatch = new Stopwatch();
+    private double targetAngle = 0;
+
     /**
      * Toggle on whether or not orientation mode is active.
      */
@@ -222,27 +225,37 @@ public class MecanumOrientationDrive extends XModule {
      *
      * @param power The power, ranging -1 to 1, to rotate the robot at.
      * @param angle The angle to rotate the robot to.
+     */
+    public void rotateToAngle(double power, double angle) {
+        rotationStopwatch.startTimer(3000);
+        targetAngle = angle;
+    }
+
+    /**
+     * Rotates the robot at a given power until the IMU reads a given angle or 3 seconds has elapsed.
+     *
+     * @param power The power, ranging -1 to 1, to rotate the robot at.
+     * @param angle The angle to rotate the robot to.
+     * @param failTime The duration, in milliseconds, to attempt the rotate the robot for.
+     */
+    public void rotateToAngle(double power, double angle, long failTime) {
+        rotationStopwatch.startTimer(failTime);
+        targetAngle = angle;
+    }
+    
+    /**
+     * Rotates the robot at a given power until the IMU reads a given angle or 3 seconds has elapsed.
+     *
+     * @param power The power, ranging -1 to 1, to rotate the robot at.
+     * @param angle The angle to rotate the robot to.
      * @throws InterruptedException On Thread Interrupted, loop fails.
      */
-    public void rotateToAngle(double power, double angle) throws InterruptedException {
-        final Stopwatch stopwatch = new Stopwatch(3000);
-        while(!stopwatch.timerDone()){
+    public void awaitRotateToAngle(double power, double angle) throws InterruptedException {
+        rotationStopwatch.startTimer(3000);
+        while(!rotationStopwatch.timerDone()){
             robotAngle = getHeadingAngle() - offset;
 
-            double margin = angle-robotAngle;
-            if(margin < -180) {
-                margin += 360;
-            } else if (margin > 180) {
-                margin -= 360;
-            }
-
-            if(Math.abs(margin) < 1){
-                return;
-            }
-
-            r = Math.signum(margin) * Math.min(45, Math.abs(margin)) / 45;
-
-            powerMotors(1);
+            rotateByError(angle);
             //Give the CPU some rest
             Thread.sleep(10);
         }
@@ -256,28 +269,34 @@ public class MecanumOrientationDrive extends XModule {
      * @param failTime The duration, in milliseconds, to attempt the rotate the robot for.
      * @throws InterruptedException On Thread Interrupted, loop fails.
      */
-    public void rotateToAngle(double power, double angle, int failTime) throws InterruptedException {
-        final Stopwatch stopwatch = new Stopwatch(failTime);
-        while(!stopwatch.timerDone()){
+    public void awaitRotateToAngle(double power, double angle, long failTime) throws InterruptedException {
+        rotationStopwatch.startTimer(failTime);
+        while(!rotationStopwatch.timerDone()){
             robotAngle = getHeadingAngle() - offset;
 
-            double margin = angle-robotAngle;
-            if(margin < -180) {
-                margin += 360;
-            } else if (margin > 180) {
-                margin -= 360;
-            }
-
-            if(Math.abs(margin) < 1){
-                return;
-            }
-
-            r = Math.signum(margin) * power * Math.min(45, Math.abs(margin)) / 45;
-
-            powerMotors(1);
+            rotateByError(angle);
             //Give the CPU some rest
             Thread.sleep(10);
         }
+    }
+
+    private void rotateByError(double angle){
+        double margin = angle-robotAngle;
+        if(margin < -180) {
+            margin += 360;
+        } else if (margin > 180) {
+            margin -= 360;
+        }
+
+        if(Math.abs(margin) < 1){
+            rotationStopwatch.clearTimer();
+            stopMotors();
+            return;
+        }
+
+        r = Math.signum(margin) * power * Math.min(45, Math.abs(margin)) / 45;
+
+        powerMotors(1);
     }
 
     public void stopMotors(){
@@ -301,6 +320,10 @@ public class MecanumOrientationDrive extends XModule {
             robotAngle = Math.toRadians(globalAngle - offset);
         } else {
             robotAngle = 0;
+        }
+
+        if(!rotationStopwatch.timerDone()){
+            rotateByError(targetAngle);
         }
 
         // Position of joystick when not straight forward
