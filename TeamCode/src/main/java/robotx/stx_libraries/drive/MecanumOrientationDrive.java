@@ -9,22 +9,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import robotx.stx_libraries.Stopwatch;
 import robotx.stx_libraries.XModule;
 
 /**
- * OrientationDrive Class
+ * MecanumOrientationDrive Class
  * <p>
  * Custom class by FTC Team 4969 RobotX for better control of driving using device IMU.
  * <p>
  * Created by Nicholas on 11/3/16.
  */
-public class OrientationDrive extends XModule {
+public class MecanumOrientationDrive extends XModule {
     /**
-     * Four wheel Driver-Centric-Drive drive stencil module.
+     * Four wheel mecanum Driver-Centric-Drive drive stencil module.
      *
-     * @param op The opMode the OrientationDrive Module will be in.
+     * @param op The opMode the MecanumOrientationDrive Module will be in.
      */
-    public OrientationDrive(OpMode op) {
+    public MecanumOrientationDrive(OpMode op) {
         super(op);
     }
 
@@ -170,7 +171,7 @@ public class OrientationDrive extends XModule {
      * @param power The percent power, ranging -1 to 1, to power each motor to.
      */
     public void powerMotors(double power){
-        final double s = ((Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(r)))) * (Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(r))))) / ((x * x) + (y * y) + (r * r));
+        final double s = Math.pow(Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(r))), 2) / ((x * x) + (y * y) + (r * r));
 
         final double xPrime = (Math.sqrt((x * x) + (y * y))) * (Math.cos(robotAngle + joystickAngle));
         final double yPrime = -(Math.sqrt(((x * x) + (y * y)))) * (Math.sin(robotAngle + joystickAngle));
@@ -216,7 +217,70 @@ public class OrientationDrive extends XModule {
         powerMotors(1);
     }
 
-    public void stop(){
+    /**
+     * Rotates the robot at a given power until the IMU reads a given angle or 3 seconds has elapsed.
+     *
+     * @param power The power, ranging -1 to 1, to rotate the robot at.
+     * @param angle The angle to rotate the robot to.
+     * @throws InterruptedException On Thread Interrupted, loop fails.
+     */
+    public void rotateToAngle(double power, double angle) throws InterruptedException {
+        final Stopwatch stopwatch = new Stopwatch(3000);
+        while(!stopwatch.timerDone()){
+            robotAngle = getHeadingAngle() - offset;
+
+            double margin = angle-robotAngle;
+            if(margin < -180) {
+                margin += 360;
+            } else if (margin > 180) {
+                margin -= 360;
+            }
+
+            if(Math.abs(margin) < 1){
+                return;
+            }
+
+            r = Math.signum(margin) * Math.min(45, Math.abs(margin)) / 45;
+
+            powerMotors(1);
+            //Give the CPU some rest
+            Thread.sleep(10);
+        }
+    }
+
+    /**
+     * Rotates the robot at a given power until the IMU reads a given angle or a given duration has elapsed.
+     *
+     * @param power The power, ranging -1 to 1, to rotate the robot at.
+     * @param angle The angle to rotate the robot to.
+     * @param failTime The duration, in milliseconds, to attempt the rotate the robot for.
+     * @throws InterruptedException On Thread Interrupted, loop fails.
+     */
+    public void rotateToAngle(double power, double angle, int failTime) throws InterruptedException {
+        final Stopwatch stopwatch = new Stopwatch(failTime);
+        while(!stopwatch.timerDone()){
+            robotAngle = getHeadingAngle() - offset;
+
+            double margin = angle-robotAngle;
+            if(margin < -180) {
+                margin += 360;
+            } else if (margin > 180) {
+                margin -= 360;
+            }
+
+            if(Math.abs(margin) < 1){
+                return;
+            }
+
+            r = Math.signum(margin) * power * Math.min(45, Math.abs(margin)) / 45;
+
+            powerMotors(1);
+            //Give the CPU some rest
+            Thread.sleep(10);
+        }
+    }
+
+    public void stopMotors(){
         x = 0;
         y = 0;
         r = 0;

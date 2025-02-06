@@ -14,11 +14,6 @@ public class Park extends LinearOpMode {
     @Override
 
     public void runOpMode() {
-
-        //Text at bottom of phone
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
         autonMethods = new AutonMethods(this);
         autonMethods.init();
 

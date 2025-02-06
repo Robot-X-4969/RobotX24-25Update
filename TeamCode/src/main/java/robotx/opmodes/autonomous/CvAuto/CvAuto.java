@@ -27,7 +27,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.List;
 
 import robotx.modules.autonomous.MecanumDrive;
-import robotx.stx_libraries.drive.OrientationDrive;
+import robotx.stx_libraries.drive.MecanumOrientationDrive;
 
 @Disabled
 
@@ -38,7 +38,7 @@ public class CvAuto extends LinearOpMode {
     OpenCvWebcam phoneCam;
     SkystoneDeterminationPipeline pipeline;
     MecanumDrive mecanumDrive;
-    OrientationDrive orientationDrive;
+    MecanumOrientationDrive mecanumOrientationDrive;
     /**
      * {@link #aprilTag} is the variable to store our instance of the AprilTag processor.
      */
@@ -62,11 +62,11 @@ public class CvAuto extends LinearOpMode {
         mecanumDrive = new MecanumDrive(this);
         mecanumDrive.init();
 
-        orientationDrive = new OrientationDrive(this);
-        orientationDrive.init();
+        mecanumOrientationDrive = new MecanumOrientationDrive(this);
+        mecanumOrientationDrive.init();
 
         mecanumDrive.start();
-        orientationDrive.start();
+        mecanumOrientationDrive.start();
 
         mecanumDrive.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         mecanumDrive.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

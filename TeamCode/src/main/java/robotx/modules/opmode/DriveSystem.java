@@ -1,12 +1,11 @@
 package robotx.modules.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import robotx.stx_libraries.drive.OrientationDrive;
+import robotx.stx_libraries.drive.MecanumOrientationDrive;
 
-public class DriveSystem extends OrientationDrive {
+public class DriveSystem extends MecanumOrientationDrive {
 
     public DriveSystem(OpMode op) {super(op);}
 

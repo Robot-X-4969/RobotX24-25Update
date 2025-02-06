@@ -19,7 +19,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import robotx.modules.autonomous.MecanumDrive;
 import robotx.modules.autonomous.OdomSystem;
-import robotx.stx_libraries.drive.OrientationDrive;
+import robotx.stx_libraries.drive.MecanumOrientationDrive;
 
 @TeleOp(name = "OpenCvScan", group = "Default")
 public class OpenCvScan extends LinearOpMode {
@@ -27,7 +27,7 @@ public class OpenCvScan extends LinearOpMode {
     OpenCvWebcam phoneCam;
     SkystoneDeterminationPipeline pipeline;
     MecanumDrive mecanumDrive;
-    OrientationDrive orientationDrive;
+    MecanumOrientationDrive mecanumOrientationDrive;
     OdomSystem odomSystem;
 
     @Override
@@ -38,8 +38,8 @@ public class OpenCvScan extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        orientationDrive = new OrientationDrive(this);
-        orientationDrive.init();
+        mecanumOrientationDrive = new MecanumOrientationDrive(this);
+        mecanumOrientationDrive.init();
 
         mecanumDrive = new MecanumDrive(this);
         mecanumDrive.init();
@@ -48,7 +48,7 @@ public class OpenCvScan extends LinearOpMode {
         odomSystem.init();
 
         mecanumDrive.start();
-        orientationDrive.start();
+        mecanumOrientationDrive.start();
 
         mecanumDrive.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         mecanumDrive.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

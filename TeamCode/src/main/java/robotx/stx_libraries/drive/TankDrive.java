@@ -1,43 +1,66 @@
 package robotx.stx_libraries.drive;
 
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import robotx.stx_libraries.Stopwatch;
 import robotx.stx_libraries.XModule;
 
 /**
- * MecanumDrive Class
+ * TankDrive Class
  * <p>
- * Custom class by FTC Team 4969 RobotX for implementation of mecanum wheel drive.
+ * Custom class by FTC Team 4969 RobotX for basic two wheel drive.
  * <p>
- * Created by John Daniher on 2/4/2025.
+ * Created by John Daniher on 2/5/2025.
  */
-public class MecanumDrive extends XModule {
+public class TankDrive extends XModule {
     /**
-     * Four wheel mecanum drive stencil module.
+     * Two wheel drive stencil module.
      *
-     * @param op The opMode the MecanumDrive Module will be in.
+     * @param op The opMode the TankOrientationDrive Module will be in.
      */
-    public MecanumDrive(OpMode op) {super(op);}
+    public TankDrive(OpMode op) {
+        super(op);
+        motorsPerSide = 1;
+        leftMotors = new DcMotor[1];
+        rightMotors = new DcMotor[1];
+    }
 
     /**
-     * The front-left motor of the drive train.
+     * Two wheel drive stencil module with a given amount of motors per side.
+     *
+     * @param op The opMode the TankOrientationDrive Module will be in.
+     * @param motorsPerSide The amount of motors per side of the drive train.
      */
-    public DcMotor frontLeft;
-    /**
-     * The front-right motor of the drive train.
-     */
-    public DcMotor frontRight;
-    /**
-     * The back-right motor of the drive train.
-     */
-    public DcMotor backRight;
-    /**
-     * The back-left motor of the drive train.
-     */
-    public DcMotor backLeft;
+    public TankDrive(OpMode op, int motorsPerSide) {
+        super(op);
+        this.motorsPerSide = motorsPerSide;
+        leftMotors = new DcMotor[motorsPerSide];
+        rightMotors = new DcMotor[motorsPerSide];
+    }
 
-    private double x;
+
+    /**
+     * The number of motors per side of the robot's drive train.
+     */
+    final int motorsPerSide;
+
+    /**
+     * An array of all motors on the left side.
+     */
+    public final DcMotor[] leftMotors;
+
+    /**
+     * An array of all motors on the right side.
+     */
+    public final DcMotor[] rightMotors;
+
     private double y;
     private double r;
 
@@ -60,14 +83,21 @@ public class MecanumDrive extends XModule {
     public double power = 0.75;
 
     /**
-     * Initialization function. This method, by default, initializes the motors
+     * Initialization function. This method, by default, initializes the motors and gyroSensor
      */
     @Override
     public void init() {
-        frontLeft = opMode.hardwareMap.dcMotor.get("frontLeft");
-        frontRight = opMode.hardwareMap.dcMotor.get("frontRight");
-        backRight = opMode.hardwareMap.dcMotor.get("backRight");
-        backLeft = opMode.hardwareMap.dcMotor.get("backLeft");
+        if(motorsPerSide > 1){
+            for(int i = 0; i < leftMotors.length; i++){
+                leftMotors[i] = opMode.hardwareMap.dcMotor.get("leftMotor" + i);
+            }
+            for(int i = 0; i < rightMotors.length; i++){
+                rightMotors[i] = opMode.hardwareMap.dcMotor.get("rightMotor" + i);
+            }
+        } else {
+            leftMotors[0] = opMode.hardwareMap.dcMotor.get("leftMotor");
+            rightMotors[0] = opMode.hardwareMap.dcMotor.get("rightMotor");
+        }
     }
 
     /**
@@ -94,7 +124,6 @@ public class MecanumDrive extends XModule {
      * Refreshes the variables tracking the joystick movements
      */
     public void refreshStick() {
-        x = xGamepad1.left_stick_x;
         y = xGamepad1.left_stick_y;
         r = xGamepad1.right_stick_x;
     }
@@ -105,20 +134,15 @@ public class MecanumDrive extends XModule {
      * @param power The percent power, ranging -1 to 1, to power each motor to.
      */
     public void powerMotors(double power){
-        final double s = Math.pow(Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(r))), 2) / ((x * x) + (y * y) + (r * r));
+        final double lPow = (y+r)*power;
+        final double rPow = (y-r)*power;
 
-        final double xPrime = (Math.sqrt((x * x) + (y * y)));
-        final double yPrime = -(Math.sqrt((x * x) + (y * y)));
-
-        final double flPow = (yPrime - xPrime - r) * (s) * power;
-        final double frPow = (yPrime + xPrime + r) * (s) * power;
-        final double brPow = (yPrime - xPrime + r) * (s) * power;
-        final double blPow = (yPrime + xPrime - r) * (s) * power;
-
-        frontLeft.setPower(flPow);
-        frontRight.setPower(frPow);
-        backLeft.setPower(blPow);
-        backRight.setPower(brPow);
+        for(DcMotor motor : leftMotors){
+            motor.setPower(lPow);
+        }
+        for(DcMotor motor : rightMotors){
+            motor.setPower(rPow);
+        }
     }
 
     /**
@@ -128,16 +152,6 @@ public class MecanumDrive extends XModule {
      */
     public void drive(double power){
         y = power;
-        powerMotors(1);
-    }
-
-    /**
-     * Sets the robot to strafe at a given power.
-     *
-     * @param power The power to strafe the robot at; +: right
-     */
-    public void strafe(double power){
-        x = power;
         powerMotors(1);
     }
 
@@ -152,7 +166,6 @@ public class MecanumDrive extends XModule {
     }
 
     public void stopMotors(){
-        x = 0;
         y = 0;
         r = 0;
         powerMotors(1);
@@ -161,12 +174,11 @@ public class MecanumDrive extends XModule {
     /**
      * Loop method which runs while opMode is active.
      * <p>
-     * Calculates and powers motors.
+     * Runs getHeadingAngle(), calculates and powers motors.
      */
     @Override
     public void loop() {
         super.loop();
-
         if (power > 1) {
             power = 1;
         }
@@ -182,6 +194,7 @@ public class MecanumDrive extends XModule {
         } else if (slowMode) {
             pow = 0.5;
         }
+
         powerMotors(pow);
     }
 }

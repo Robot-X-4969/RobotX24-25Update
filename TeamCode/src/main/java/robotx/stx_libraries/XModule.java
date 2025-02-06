@@ -70,6 +70,7 @@ public abstract class XModule {
         for (XMotor motor : loopMotors) {
             motor.loop();
         }
+        opMode.telemetry.update();
     }
 
     /**
@@ -91,6 +92,7 @@ public abstract class XModule {
      */
     public void loop() {
         control_loop();
+        opMode.telemetry.update();
         for (XMotor motor : loopMotors) {
             motor.loop();
         }
