@@ -1,4 +1,4 @@
-package robotx.libraries;
+package robotx.stx_libraries;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -8,7 +8,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 /**
- * Created by John Daniher 1/21/25
+ * Created by John Daniher 1/21/2025
  * Some code by Owen Stuckman 2024
  */
 public class XCamera {

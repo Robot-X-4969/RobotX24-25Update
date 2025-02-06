@@ -17,8 +17,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import robotx.modules.autonomous.MecanumDrive;
 import robotx.modules.autonomous.OdomSystem;
+import robotx.stx_libraries.drive.MecanumDrive;
 import robotx.stx_libraries.drive.MecanumOrientationDrive;
 
 @TeleOp(name = "OpenCvScan", group = "Default")

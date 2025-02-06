@@ -13,53 +13,38 @@ import robotx.stx_libraries.Stopwatch;
 import robotx.stx_libraries.XModule;
 
 /**
- * TankOrientationDrive Class
+ * OmniOrientationDrive Class
  * <p>
  * Custom class by FTC Team 4969 RobotX for better control of driving using device IMU.
  * <p>
  * Created by John Daniher on 2/5/2025.
  */
-public class TankOrientationDrive extends XModule {
+public class OmniOrientationDrive extends XModule {
     /**
-     * Two wheel drive stencil module.
+     * Four wheel omni Driver-Centric-Drive drive stencil module.
      *
-     * @param op The opMode the TankOrientationDrive Module will be in.
+     * @param op The opMode the OmniOrientationDrive Module will be in.
      */
-    public TankOrientationDrive(OpMode op) {
+    public OmniOrientationDrive(OpMode op) {
         super(op);
-        motorsPerSide = 1;
-        leftMotors = new DcMotor[1];
-        rightMotors = new DcMotor[1];
     }
 
     /**
-     * Two wheel drive stencil module with a given amount of motors per side.
-     *
-     * @param op The opMode the TankOrientationDrive Module will be in.
-     * @param motorsPerSide The amount of motors per side of the drive train.
+     * The front motor of the drive train.
      */
-    public TankOrientationDrive(OpMode op, int motorsPerSide) {
-        super(op);
-        this.motorsPerSide = motorsPerSide;
-        leftMotors = new DcMotor[motorsPerSide];
-        rightMotors = new DcMotor[motorsPerSide];
-    }
-
-
+    public DcMotor front;
     /**
-     * The number of motors per side of the robot's drive train.
+     * The right motor of the drive train.
      */
-    final int motorsPerSide;
-
+    public DcMotor right;
     /**
-     * An array of all motors on the left side.
+     * The back motor of the drive train.
      */
-    public final DcMotor[] leftMotors;
-
+    public DcMotor back;
     /**
-     * An array of all motors on the right side.
+     * The left motor of the drive train.
      */
-    public final DcMotor[] rightMotors;
+    public DcMotor left;
 
     private BHI260IMU gyroSensor;
     private Orientation lastAngles = new Orientation();
@@ -71,13 +56,19 @@ public class TankOrientationDrive extends XModule {
      * The angle at which the robot is currently rotated in respect to its set orientation angle.
      */
     public double robotAngle;
+    private double joystickAngle;
 
+    private double x;
     private double y;
     private double r;
 
     private final Stopwatch rotationStopwatch = new Stopwatch();
     private double targetAngle = 0;
 
+    /**
+     * Toggle on whether or not orientation mode is active.
+     */
+    public boolean orientationMode = true;
     private double offset = 0;
 
     /**
@@ -103,21 +94,21 @@ public class TankOrientationDrive extends XModule {
      */
     @Override
     public void init() {
-        if(motorsPerSide > 1){
-            for(int i = 0; i < leftMotors.length; i++){
-                leftMotors[i] = opMode.hardwareMap.dcMotor.get("left" + i);
-            }
-            for(int i = 0; i < rightMotors.length; i++){
-                rightMotors[i] = opMode.hardwareMap.dcMotor.get("right" + i);
-            }
-        } else {
-            leftMotors[0] = opMode.hardwareMap.dcMotor.get("left");
-            rightMotors[0] = opMode.hardwareMap.dcMotor.get("right");
-        }
+        front = opMode.hardwareMap.dcMotor.get("front");
+        right = opMode.hardwareMap.dcMotor.get("right");
+        back = opMode.hardwareMap.dcMotor.get("back");
+        left = opMode.hardwareMap.dcMotor.get("left");
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         gyroSensor = opMode.hardwareMap.get(BHI260IMU.class, "imu");
         gyroSensor.initialize();
+    }
+
+    /**
+     * Toggles whether or not orientation mode is active.
+     */
+    public void toggleOrientation() {
+        orientationMode = !orientationMode;
     }
 
     /**
@@ -151,6 +142,7 @@ public class TankOrientationDrive extends XModule {
      * Refreshes the variables tracking the joystick movements
      */
     public void refreshStick() {
+        x = xGamepad1.left_stick_x;
         y = xGamepad1.left_stick_y;
         r = xGamepad1.right_stick_x;
     }
@@ -182,15 +174,18 @@ public class TankOrientationDrive extends XModule {
      * @param power The percent power, ranging -1 to 1, to power each motor to.
      */
     public void powerMotors(double power){
-        final double lPow = (y+r)*power;
-        final double rPow = (y-r)*power;
+        final double s = Math.pow(Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(r))), 2) / ((x * x) + (y * y) + (r * r));
 
-        for(DcMotor motor : leftMotors){
-            motor.setPower(lPow);
-        }
-        for(DcMotor motor : rightMotors){
-            motor.setPower(rPow);
-        }
+        final double xPrime = (Math.sqrt((x * x) + (y * y))) * (Math.cos(robotAngle + joystickAngle));
+        final double yPrime = -(Math.sqrt(((x * x) + (y * y)))) * (Math.sin(robotAngle + joystickAngle));
+
+        final double xPow = (xPrime + r) * (s) * power;
+        final double yPow = (yPrime + r) * (s) * power;
+
+        front.setPower(xPow);
+        right.setPower(yPow);
+        back.setPower(xPow);
+        left.setPower(yPow);
     }
 
     /**
@@ -200,6 +195,16 @@ public class TankOrientationDrive extends XModule {
      */
     public void drive(double power){
         y = power;
+        powerMotors(1);
+    }
+
+    /**
+     * Sets the robot to strafe at a given power.
+     *
+     * @param power The power to strafe the robot at; +: right
+     */
+    public void strafe(double power){
+        x = power;
         powerMotors(1);
     }
 
@@ -293,6 +298,7 @@ public class TankOrientationDrive extends XModule {
     }
 
     public void stopMotors(){
+        x = 0;
         y = 0;
         r = 0;
         powerMotors(1);
@@ -307,10 +313,28 @@ public class TankOrientationDrive extends XModule {
     public void loop() {
         super.loop();
         getHeadingAngle();
-        robotAngle = Math.toRadians(globalAngle - offset);
+
+        if (orientationMode) {
+            robotAngle = Math.toRadians(globalAngle - offset);
+        } else {
+            robotAngle = 0;
+        }
 
         if(!rotationStopwatch.timerDone()){
             rotateByError(targetAngle);
+        }
+
+        // Position of joystick when not straight forward
+        if (x > 0) {
+            joystickAngle = Math.atan(-y / x);
+        } else if (x < 0) {
+            joystickAngle = Math.atan(-y / x) + Math.toRadians(180);
+        }
+        // Position of joystick when near perfectly forward
+        else if (y > 0) {
+            joystickAngle = Math.toRadians(270);
+        } else if (y < 0) {
+            joystickAngle = Math.toRadians(90);
         }
 
         if (power > 1) {

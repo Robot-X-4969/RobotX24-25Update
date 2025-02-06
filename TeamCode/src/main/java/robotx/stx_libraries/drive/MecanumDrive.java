@@ -107,13 +107,10 @@ public class MecanumDrive extends XModule {
     public void powerMotors(double power){
         final double s = Math.pow(Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(r))), 2) / ((x * x) + (y * y) + (r * r));
 
-        final double xPrime = (Math.sqrt((x * x) + (y * y)));
-        final double yPrime = -(Math.sqrt((x * x) + (y * y)));
-
-        final double flPow = (yPrime - xPrime - r) * (s) * power;
-        final double frPow = (yPrime + xPrime + r) * (s) * power;
-        final double brPow = (yPrime - xPrime + r) * (s) * power;
-        final double blPow = (yPrime + xPrime - r) * (s) * power;
+        final double flPow = (y - x - r) * (s) * power;
+        final double frPow = (y + x + r) * (s) * power;
+        final double brPow = (y - x + r) * (s) * power;
+        final double blPow = (y + x - r) * (s) * power;
 
         frontLeft.setPower(flPow);
         frontRight.setPower(frPow);

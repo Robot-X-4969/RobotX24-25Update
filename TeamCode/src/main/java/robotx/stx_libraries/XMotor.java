@@ -397,6 +397,40 @@ public class XMotor {
     }
 
     /**
+     * Checks if the motor has reached its target encoder position.
+     *
+     * @return True if with 1 degree of target position; false if else
+     */
+    public boolean atTarget(){
+        refreshPosition(false);
+        return Math.abs(targetPosition - position) < tpr/360;
+    }
+
+    /**
+     * Holds thread until motor reaches target encoder position.
+     *
+     * @throws InterruptedException If Thread or loop fails.
+     */
+    public void awaitTarget() throws InterruptedException {
+        while(!atTarget()){
+            Thread.sleep(25);
+        }
+    }
+
+    /**
+     * Holds thread until motor reaches target encoder position or until given duration elapses.
+     *
+     * @param failTime The time, in milliseconds, until it stops holding the thread.
+     * @throws InterruptedException If Thread or loop fails.
+     */
+    public void awaitTarget(int failTime) throws InterruptedException {
+        final Stopwatch stopwatch = new Stopwatch(failTime);
+        while(!atTarget() && !stopwatch.timerDone()){
+            Thread.sleep(25);
+        }
+    }
+
+    /**
      * Rotates the motor by a given amount of encoder ticks.
      *
      * @param incrementAmount Amount of encoder ticks to rotate by.

@@ -1,11 +1,9 @@
-package robotx.libraries;
+package robotx.stx_libraries;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import robotx.stx_libraries.XModule;
 
 public class XAuton extends LinearOpMode {
     public final List<XModule> modules = new ArrayList<>();

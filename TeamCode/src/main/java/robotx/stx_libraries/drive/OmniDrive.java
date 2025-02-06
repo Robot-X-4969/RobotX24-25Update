@@ -1,59 +1,52 @@
 package robotx.stx_libraries.drive;
 
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import robotx.stx_libraries.Stopwatch;
 import robotx.stx_libraries.XModule;
 
 /**
- * TankDrive Class
+ * OmniDrive Class
  * <p>
- * Custom class by FTC Team 4969 RobotX for basic two wheel drive.
+ * Custom class by FTC Team 4969 RobotX for control of robot with omni wheels.
  * <p>
  * Created by John Daniher on 2/5/2025.
  */
-public class TankDrive extends XModule {
+public class OmniDrive extends XModule {
     /**
-     * Two wheel drive stencil module.
+     * Four wheel omni drive stencil module.
      *
-     * @param op The opMode the TankOrientationDrive Module will be in.
+     * @param op The opMode the OmniDrive Module will be in.
      */
-    public TankDrive(OpMode op) {
+    public OmniDrive(OpMode op) {
         super(op);
-        motorsPerSide = 1;
-        leftMotors = new DcMotor[1];
-        rightMotors = new DcMotor[1];
     }
 
     /**
-     * Two wheel drive stencil module with a given amount of motors per side.
-     *
-     * @param op            The opMode the TankOrientationDrive Module will be in.
-     * @param motorsPerSide The amount of motors per side of the drive train.
+     * The front motor of the drive train.
      */
-    public TankDrive(OpMode op, int motorsPerSide) {
-        super(op);
-        this.motorsPerSide = motorsPerSide;
-        leftMotors = new DcMotor[motorsPerSide];
-        rightMotors = new DcMotor[motorsPerSide];
-    }
-
-
+    public DcMotor front;
     /**
-     * The number of motors per side of the robot's drive train.
+     * The right motor of the drive train.
      */
-    final int motorsPerSide;
-
+    public DcMotor right;
     /**
-     * An array of all motors on the left side.
+     * The back motor of the drive train.
      */
-    public final DcMotor[] leftMotors;
-
+    public DcMotor back;
     /**
-     * An array of all motors on the right side.
+     * The left motor of the drive train.
      */
-    public final DcMotor[] rightMotors;
+    public DcMotor left;
 
+    private double x;
     private double y;
     private double r;
 
@@ -80,17 +73,10 @@ public class TankDrive extends XModule {
      */
     @Override
     public void init() {
-        if (motorsPerSide > 1) {
-            for (int i = 0; i < leftMotors.length; i++) {
-                leftMotors[i] = opMode.hardwareMap.dcMotor.get("left" + i);
-            }
-            for (int i = 0; i < rightMotors.length; i++) {
-                rightMotors[i] = opMode.hardwareMap.dcMotor.get("rightMotor" + i);
-            }
-        } else {
-            leftMotors[0] = opMode.hardwareMap.dcMotor.get("left");
-            rightMotors[0] = opMode.hardwareMap.dcMotor.get("rightMotor");
-        }
+        front = opMode.hardwareMap.dcMotor.get("front");
+        right = opMode.hardwareMap.dcMotor.get("right");
+        back = opMode.hardwareMap.dcMotor.get("back");
+        left = opMode.hardwareMap.dcMotor.get("left");
     }
 
     /**
@@ -117,6 +103,7 @@ public class TankDrive extends XModule {
      * Refreshes the variables tracking the joystick movements
      */
     public void refreshStick() {
+        x = xGamepad1.left_stick_x;
         y = xGamepad1.left_stick_y;
         r = xGamepad1.right_stick_x;
     }
@@ -126,18 +113,16 @@ public class TankDrive extends XModule {
      *
      * @param power The percent power, ranging -1 to 1, to power each motor to.
      */
-    public void powerMotors(double power) {
-        final double s = Math.pow(Math.max(Math.abs(y), Math.abs(r)), 2) / ((y * y) + (r * r));
+    public void powerMotors(double power){
+        final double s = Math.pow(Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(r))), 2) / ((x * x) + (y * y) + (r * r));
 
-        final double lPow = (y + r) * (s) * power;
-        final double rPow = (y - r) * (s) * power;
+        final double xPow = (x + r) * (s) * power;
+        final double yPow = (y + r) * (s) * power;
 
-        for (DcMotor motor : leftMotors) {
-            motor.setPower(lPow);
-        }
-        for (DcMotor motor : rightMotors) {
-            motor.setPower(rPow);
-        }
+        front.setPower(xPow);
+        right.setPower(yPow);
+        back.setPower(xPow);
+        left.setPower(yPow);
     }
 
     /**
@@ -145,8 +130,18 @@ public class TankDrive extends XModule {
      *
      * @param power The power to drive the robot at; +: forwards
      */
-    public void drive(double power) {
+    public void drive(double power){
         y = power;
+        powerMotors(1);
+    }
+
+    /**
+     * Sets the robot to strafe at a given power.
+     *
+     * @param power The power to strafe the robot at; +: right
+     */
+    public void strafe(double power){
+        x = power;
         powerMotors(1);
     }
 
@@ -160,7 +155,8 @@ public class TankDrive extends XModule {
         powerMotors(1);
     }
 
-    public void stopMotors() {
+    public void stopMotors(){
+        x = 0;
         y = 0;
         r = 0;
         powerMotors(1);
@@ -174,6 +170,7 @@ public class TankDrive extends XModule {
     @Override
     public void loop() {
         super.loop();
+
         if (power > 1) {
             power = 1;
         }

@@ -50,6 +50,7 @@ public abstract class XModule {
      * Update method which refreshes xGamepad objects.
      */
     public void update() {
+        scheduler.loop();
         xGamepad1.update(opMode.gamepad1);
         xGamepad2.update(opMode.gamepad2);
     }
