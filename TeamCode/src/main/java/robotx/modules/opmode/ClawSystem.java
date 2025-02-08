@@ -6,12 +6,10 @@ import robotx.stx_libraries.XModule;
 import robotx.stx_libraries.XServo;
 
 public class ClawSystem extends XModule {
-    public static boolean toggle = true;
-
     public static final double increment = 0.01 * 3 / 20;
 
-    public final XServo clawServo, rotationServo;
-    public final XServo[] mountServos;
+    private final XServo clawServo, rotationServo;
+    private final XServo[] mountServos;
 
     public ClawSystem(OpMode op) {
         super(op);
@@ -61,7 +59,7 @@ public class ClawSystem extends XModule {
     @Override
     public void control_loop() {
         //2nd Driver Controls
-        if (toggle) {
+        if (dualPlayer) {
             if (xGamepad2.a.wasPressed()) {
                 resetRotation();
                 rotateMount(true);

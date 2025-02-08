@@ -19,6 +19,7 @@ public class DriveSystem extends MecanumOrientationDrive {
     @Override
     public void control_loop(){
         refreshStick();
+        slowMode = LiftSystem.state == 1;
         if (xGamepad1.x.wasPressed()) {
             resetOrientation();
         }

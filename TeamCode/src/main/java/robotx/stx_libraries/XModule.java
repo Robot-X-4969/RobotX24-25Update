@@ -30,6 +30,8 @@ public abstract class XModule {
      */
     public XGamepad xGamepad2 = new XGamepad();
 
+    public boolean dualPlayer = true;
+
     /**
      * List of module's motors to be called every loop.
      */
@@ -84,6 +86,9 @@ public abstract class XModule {
      * Method which handles inputs.
      */
     public void control_loop() {
+        if(xGamepad1.back.wasPressed()){
+            dualPlayer = !dualPlayer;
+        }
     }
 
     /**

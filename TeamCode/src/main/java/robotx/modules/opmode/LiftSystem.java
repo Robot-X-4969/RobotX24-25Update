@@ -9,16 +9,13 @@ import robotx.stx_libraries.XServo;
 public class LiftSystem extends XModule {
 
     // motors being used
-
-    public static boolean toggle = true;
     public static int state = 0;
 
     private final XServo[] liftServos;
 
-    public double power = 1;
     public static double margin = 0.0;
 
-    public XMotor[] liftMotors;
+    private final XMotor[] liftMotors;
 
     public LiftSystem(OpMode op) {
         super(op);
@@ -69,9 +66,8 @@ public class LiftSystem extends XModule {
 
     // sets lift motor power one to the opposite of lift motor one because that's what makes them work
     public void lift(double liftPower) {
-        for(XMotor motor : liftMotors){
-            motor.setPower(liftPower);
-        }
+        liftMotors[0].setPower(liftPower);
+        liftMotors[1].setPower(-liftPower);
     }
 
     public void rotateLift(boolean forward) {
@@ -91,7 +87,7 @@ public class LiftSystem extends XModule {
     @Override
     public void control_loop() {
         // 2nd Driver Controls
-        if (toggle) {
+        if (dualPlayer) {
             if (xGamepad2.a.wasPressed()) {
                 rotateLift(true);
             }
