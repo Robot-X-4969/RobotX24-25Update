@@ -25,7 +25,7 @@ public class Park extends LinearOpMode {
 
         if (opModeIsActive()) {
             autonMethods.strafeRight(1);
-            sleep(autonMethods.sleepTime(tileTime*2));
+            sleep(autonMethods.sleepTime(10000));
             autonMethods.stop();
         }
     }

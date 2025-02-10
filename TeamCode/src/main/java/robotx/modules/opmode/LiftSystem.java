@@ -94,10 +94,22 @@ public class LiftSystem extends XModule {
             if (xGamepad2.x.wasPressed()) {
                 rotateLift(false);
             }
-            if (xGamepad2.right_trigger > .1) {
+            if (xGamepad1.right_trigger > .1) {
+                lift(-xGamepad1.right_trigger);
+            } else if (xGamepad1.left_trigger > .1) {
+                lift(xGamepad1.left_trigger);
+            } else if (xGamepad2.right_trigger > .1) {
                 lift(-xGamepad2.right_trigger);
             } else if (xGamepad2.left_trigger > .1) {
                 lift(xGamepad2.left_trigger);
+            } else {
+                lift(0);
+            }
+        } else {
+            if (xGamepad1.right_trigger > .1) {
+                lift(-xGamepad1.right_trigger);
+            } else if (xGamepad1.left_trigger > .1) {
+                lift(xGamepad1.left_trigger);
             } else {
                 lift(0);
             }
@@ -105,13 +117,6 @@ public class LiftSystem extends XModule {
         // 1st Driver Controls; Overrides
         if (xGamepad1.a.wasPressed()) {
             rotateLift(true);
-        }
-        if (xGamepad1.right_trigger > .1) {
-            lift(-xGamepad1.right_trigger);
-        } else if (xGamepad1.left_trigger > .1) {
-            lift(xGamepad1.left_trigger);
-        } else {
-            lift(0);
         }
     }
 }

@@ -83,6 +83,10 @@ public class XGamepad {
         right_bumper.update(gamepad.right_bumper);
         left_stick_button.update(gamepad.left_stick_button);
         right_stick_button.update(gamepad.right_stick_button);
+
+        if(start.isDown()){
+            a.update(false);
+        }
     }
 
     /**
@@ -113,5 +117,9 @@ public class XGamepad {
         right_bumper.update(gamepad.right_bumper);
         left_stick_button.update(gamepad.left_stick_button);
         right_stick_button.update(gamepad.right_stick_button);
+
+        if(start.isDown()){
+            a.update(false);
+        }
     }
 }

@@ -14,15 +14,15 @@ public class ClawSystem extends XModule {
     public ClawSystem(OpMode op) {
         super(op);
         clawServo = new XServo(op, "clawServo", new double[]{
-                0.5, 0.85
+                0.5, 0.75
         });
         rotationServo = new XServo(op, "rotationServo", 0.5);
         mountServos = new XServo[]{
                 new XServo(op, "mountServo1", new double[]{
-                        1, .33
+                        1, .35
                 }),
                 new XServo(op, "mountServo2", new double[]{
-                        0, .67 * 3 / 20
+                        0, .65 * 3 / 20
                 })
         };
     }
