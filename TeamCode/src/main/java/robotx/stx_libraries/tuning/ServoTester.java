@@ -57,7 +57,7 @@ public class ServoTester extends XModule {
         }
         opMode.telemetry.addData("Controls", "\nD-Pad Left: Unit / 10\nD-Pad Right: Unit * 10\nD-Pad Up: Position+\nD-Pad Down: Position-\nA: Cycle forwards through servos\nB: Cycle backwards through servos\nX: Toggle PWM");
         opMode.telemetry.addData("Testing Servo: ", servoPaths[index]);
-        opMode.telemetry.addData("Servo Position: ", servos[index].position);
+        opMode.telemetry.addData("Servo Position: ", servos[index].getPosition());
         super.loop();
     }
 

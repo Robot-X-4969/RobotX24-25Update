@@ -15,28 +15,19 @@ public class XServo {
     private final String servoPath;
     private final OpMode op;
 
-    public boolean enabled = true;
+    private boolean enabled = true;
 
-    /**
-     * The minimum position of the servo's set range.
-     */
-    public double min;
-    /**
-     * The maximum position of the servo's set range.
-     */
-    public double max;
+    private double min;
+    private double max;
 
-    /**
-     * The servo's current set position.
-     */
-    public double position;
+    private double position;
 
     private double[] positions;
 
     /**
      * The current index of the servo's position in the provided positions array.
      */
-    public int index = 0;
+    private int index = 0;
     private int lastIndex = 0;
 
     /**
@@ -98,6 +89,22 @@ public class XServo {
     public void init() {
         servo = op.hardwareMap.get(ServoImplEx.class, servoPath);
         servo.setPosition(positions[index]);
+    }
+
+    public int getIndex(){
+        return index;
+    }
+
+    public double getPosition(){
+        return position;
+    }
+
+    public double[] getPositionsArray(){
+        return  positions;
+    }
+
+    public boolean currentlyEnabled(){
+        return enabled;
     }
 
     /**

@@ -19,7 +19,8 @@ public class AutonMethods extends XModule {
     private DcMotor liftMotor1;
     private DcMotor liftMotor2;
 
-    private XServo[] liftServos;
+    private final XServo[] liftServos;
+    private final XServo clawServo;
 
     public static final int tileTime = 0;
 
@@ -41,6 +42,7 @@ public class AutonMethods extends XModule {
                         .25 - margin, .75 - margin, .75 - margin, .25 - margin
                 })
         };
+        clawServo = new XServo(op, "clawServo", 0.5);
     }
     public void init() {
         frontLeft = opMode.hardwareMap.dcMotor.get("frontLeft");

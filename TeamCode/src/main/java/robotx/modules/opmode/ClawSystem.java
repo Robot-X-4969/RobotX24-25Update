@@ -7,6 +7,7 @@ import robotx.stx_libraries.XServo;
 
 public class ClawSystem extends XModule {
     public static final double increment = 0.01 * 3 / 20;
+    private static final double position = .65;
 
     private final XServo clawServo, rotationServo;
     private final XServo[] mountServos;
@@ -19,10 +20,10 @@ public class ClawSystem extends XModule {
         rotationServo = new XServo(op, "rotationServo", 0.5);
         mountServos = new XServo[]{
                 new XServo(op, "mountServo1", new double[]{
-                        1, .35
+                        1, 1, .35, 1, .35
                 }),
                 new XServo(op, "mountServo2", new double[]{
-                        0, .65 * 3 / 20
+                        0, 0, position, 0, position
                 })
         };
     }
@@ -40,18 +41,20 @@ public class ClawSystem extends XModule {
         clawServo.forward();
     }
 
-    public void resetRotation(){
+    public void resetRotation() {
         rotationServo.forward();
     }
 
-    public void rotateMount(boolean forward){
-        if(forward){
-            for (XServo servo : mountServos) {
-                servo.forward();
-            }
-        } else {
-            for (XServo servo : mountServos) {
-                servo.backward();
+    public void rotateMount(boolean forward) {
+        if (LiftSystem.canTurn) {
+            if (forward) {
+                for (XServo servo : mountServos) {
+                    servo.forward();
+                }
+            } else {
+                for (XServo servo : mountServos) {
+                    servo.backward();
+                }
             }
         }
     }

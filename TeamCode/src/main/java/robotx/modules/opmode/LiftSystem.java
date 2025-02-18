@@ -10,6 +10,8 @@ public class LiftSystem extends XModule {
 
     // motors being used
     public static int state = 0;
+    public static boolean canTurn = false;
+    private static int range = 2150;
 
     private final XServo[] liftServos;
 
@@ -27,16 +29,16 @@ public class LiftSystem extends XModule {
 
         liftServos = new XServo[]{
                 new XServo(op, "liftServo1", new double[]{
-                        .75 + margin, .25 + margin, .25 + margin, .75 + margin
+                        .75 + margin, .25 + margin, .25 + margin, .25 + margin, .75 + margin,
                 }),
                 new XServo(op, "liftServo2", new double[]{
-                        .25 - margin, .75 - margin, .75 - margin, .25 - margin
+                        .25 - margin,.75 - margin, .75 - margin, .75 - margin, .25 - margin,
                 }),
                 new XServo(op, "liftServo3", new double[]{
-                        .75 + margin, .25 + margin, .25 + margin, .75 + margin
+                        .75 + margin, .25 + margin, .25 + margin, .25 + margin, .75 + margin,
                 }),
                 new XServo(op, "liftServo4", new double[]{
-                        .25 - margin, .75 - margin, .75 - margin, .25 - margin
+                        .25 - margin, .75 - margin, .75 - margin, .75 - margin, .25 - margin,
                 })
         };
     }
@@ -55,13 +57,8 @@ public class LiftSystem extends XModule {
         }
     }
 
-    public void incrementState(int increment) {
-        state += increment;
-        if (state > 3) {
-            state = 0;
-        } else if (state < 0) {
-            state = 3;
-        }
+    public void incrementState() {
+        state = liftServos[0].getIndex();
     }
 
     // sets lift motor power one to the opposite of lift motor one because that's what makes them work
@@ -71,21 +68,31 @@ public class LiftSystem extends XModule {
     }
 
     public void rotateLift(boolean forward) {
-        if(forward){
-            for (XServo servo : liftServos) {
-                servo.forward();
+        if(canTurn) {
+            if (forward) {
+                for (XServo servo : liftServos) {
+                    servo.forward();
+                }
+                incrementState();
+            } else {
+                for (XServo servo : liftServos) {
+                    servo.backward();
+                }
+                incrementState();
             }
-            incrementState(1);
-        } else {
-            for (XServo servo : liftServos) {
-                servo.backward();
+            if (state == 0 || state == 4) {
+                liftMotors[1].setRange(0, Integer.MAX_VALUE);
+                liftMotors[0].setRange(Integer.MIN_VALUE, 0);
+            } else {
+                liftMotors[1].setRange(0, range);
+                liftMotors[0].setRange(-range, 0);
             }
-            incrementState(-1);
         }
     }
 
     @Override
     public void control_loop() {
+        canTurn = Math.abs(liftMotors[1].getPosition()) < 500;
         // 2nd Driver Controls
         if (dualPlayer) {
             if (xGamepad2.a.wasPressed()) {

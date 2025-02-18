@@ -83,11 +83,13 @@ public class ConfigTester extends XModule {
         for (DcMotor motor : motors) {
             motor.setPower(0);
         }
-        opMode.telemetry.addData("Controls:", "\nD-Pad: Cycle Motors"
-                + "\nY: motor" + (index % motors.length)
-                + "\nB: motor" + ((index + 1) % motors.length)
-                + "\nA: motor" + ((index + 2) % motors.length)
-                + "\nX: motor" + ((index + 3) % motors.length) + "\n");
+        if(motors.length > 0){
+            opMode.telemetry.addData("Controls:", "\nD-Pad: Cycle Motors"
+                    + "\nY: motor" + (index % motors.length)
+                    + "\nB: motor" + ((index + 1) % motors.length)
+                    + "\nA: motor" + ((index + 2) % motors.length)
+                    + "\nX: motor" + ((index + 3) % motors.length) + "\n");
+        }
         opMode.telemetry.addData("Powered Motors: ", poweredMotors);
         opMode.telemetry.addData("Open Servos: ", activeServos);
         poweredMotors.clear();

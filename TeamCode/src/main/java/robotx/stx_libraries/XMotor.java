@@ -16,14 +16,13 @@ public class XMotor {
     private final String motorPath;
 
     private DcMotor motor;
-    /**
-     * The power the motor is currently set to.
-     */
-    public double power = 0;
+    private double power = 0;
+
+    private XMotor following;
 
     private boolean fixed = false;
     private int targetPosition = 0;
-    public int position = 0;
+    private int position = 0;
 
     private final Stopwatch stopWatch = new Stopwatch();
 
@@ -103,6 +102,24 @@ public class XMotor {
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         reset();
+    }
+
+    /**
+     * Returmns teh current power of the motor.
+     *
+     * @return The current power of the motor.
+     */
+    public double getPower(){
+        return motor.getPower();
+    }
+
+    /**
+     * Returmns teh current power of the motor.
+     *
+     * @return The current power of the motor.
+     */
+    public int getPosition(){
+        return motor.getCurrentPosition();
     }
 
     /**
@@ -496,7 +513,17 @@ public class XMotor {
      * @param max The maximum encoder position of the motor.
      */
     public void setRange(int min, int max) {
+        this.min = min;
         this.max = max;
+    }
+
+    public void follow(XMotor motor){
+        this.following = motor;
+        setFixedRotation(motor.getPosition(), motor.getPower());
+    }
+
+    public void unfollow(){
+        this.following = null;
     }
 
     /**
@@ -520,6 +547,17 @@ public class XMotor {
      */
     public void loop() {
         refreshPosition(false);
+        op.telemetry.addData("pos", position);
+
+        if(following != null){
+            final int followingPosition = following.getPosition();
+            double newPower = following.getPower();
+
+            if(newPower == 0 && Math.abs(position-followingPosition) > 10){
+                newPower = 0.25;
+            }
+            setFixedRotation(followingPosition, newPower);
+        }
 
         //Ensures encoder within range
         if (position < min) {

@@ -37,7 +37,7 @@ public class EncoderTester extends XModule {
     public void loop(){
         opMode.telemetry.addData("Controls", "\nD-Pad Left: Unit / 10\nD-Pad Right: Unit * 10\nD-Pad Up: Position+\nD-Pad Down: Position-\nA: Cycle forwards through motors\nB: Cycle backwards through motors");
         opMode.telemetry.addData("Testing Motor: ", motorPaths[index]);
-        opMode.telemetry.addData("Motor Position: ", motors[index].position);
+        opMode.telemetry.addData("Motor Position: ", motors[index].getPosition());
         super.loop();
     }
 

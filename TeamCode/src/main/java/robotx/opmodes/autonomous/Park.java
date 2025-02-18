@@ -12,7 +12,6 @@ public class Park extends LinearOpMode {
     AutonMethods autonMethods;
 
     @Override
-
     public void runOpMode() {
         autonMethods = new AutonMethods(this);
         autonMethods.init();
@@ -24,7 +23,7 @@ public class Park extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            autonMethods.strafeRight(1);
+            autonMethods.strafeRight(-1);
             sleep(autonMethods.sleepTime(10000));
             autonMethods.stop();
         }
